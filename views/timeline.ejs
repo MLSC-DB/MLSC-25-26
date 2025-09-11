@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/images/mlsclogo.jpeg" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sacred Timeline - MLSC</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manufacturing+Consent&display=swap" rel="stylesheet">
+
+  <script type="module" crossorigin src="/timeline/assets/index-CCOI0_so.js"></script>
+  <link rel="stylesheet" crossorigin href="/timeline/assets/index-DGDwhTZo.css">
+
+  <style>
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10000;
+      background: rgba(0, 255, 247, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 255, 247, 0.3);
+      border-radius: 12px;
+      padding: 12px 24px;
+      color: #00fff7;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    .back-button:hover {
+      background: rgba(0, 255, 247, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 255, 247, 0.2);
+      color: #00fff7;
+      text-decoration: none;
+    }
+
+    .back-button::before {
+      content: "←";
+      font-size: 1.2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .back-button {
+        padding: 10px 20px;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .back-button {
+        top: 15px;
+        left: 15px;
+        padding: 8px 16px;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Back Button -->
+  <a href="/" class="back-button">
+    Home
+  </a>
+
+  <div id="page1" class="page w-full h-screen  flex justify-center items-center">
+    <h1 class="text-white text-[150px]  z-30">MLSC TIMELINE</h1>
+  </div>
+  <div id="page2" class="page flex flex-col items-center justify-center  w-full h-screen ">
+    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none">
+      <h1 class="overflow-hidden">PAST EVENTS ORGANIZED BY MLSC</h1>
+    </div>
+    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
+      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
+          class="object-cover w-full h-full overflow-hidden" src="/timeline/delta.webp" alt=""></div>
+      <div class="content  rounded-lg w-[40%] h-[80%]  p-8">
+        <h1 class="text-[40px] font-bold tracking-wide">DeltΔ</h1>
+        <p class="mt-10">Delta, a three-day flagship event, featured a Cryptic Hunt on day 1, a Treasure Hunt on day 2,
+          and a Gaming Night on day 3, offering participants a blend of challenging puzzles, adventurous quests, and
+          competitive gaming.</p>
+      </div>
+    </div>
+  </div>
+  <div id="page3" class="page w-full h-screen flex flex-col items-center justify-center ">
+    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none"></div>
+    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
+      <div class="content  rounded-lg w-[40%] h-[80%]  p-8">
+        <h1 class="text-[40px] font-bold tracking-wide">A$tellar</h1>
+        <p class="mt-10">Astellar featured a 24-hour Cryptic Hunt followed by a Gaming Night, offering participants the
+          chance to win prizes worth ₹12,000. It combined intellectual challenge with competitive gaming for an engaging
+          and rewarding experience.</p>
+      </div>
+      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
+          class="object-cover w-full h-full overflow-hidden" src="/timeline/gamiing.webp" alt=""></div>
+
+    </div>
+  </div>
+  <div id="page4" class="page w-full h-screen flex flex-col items-center justify-center ">
+    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none"></div>
+    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
+      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
+          class="object-cover w-full h-full overflow-hidden" src="/timeline/gaming.png" alt=""></div>
+      <div class="content  rounded-lg w-[40%] h-[80%]  p-8">
+        <h1 class="text-[40px] font-bold tracking-wide">GΔming</h1>
+        <p class="mt-10">An electrifying Gaming Night, bringing together students for an evening packed with competitive spirit, teamwork, and pure fun. The event featured a mix of popular titles including Valorant, BGMI, FIFA, and several party games, creating a dynamic atmosphere that catered to both casual and hardcore gamers. From intense 1v1 battles to chaotic multiplayer showdowns, the night was a celebration of community and digital entertainment. With snacks, music, and plenty of memorable moments, Gaming Night turned out to be a massive hit—reminding everyone that tech isn’t just about code, but also about connection.</p>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div id="page5" class="page w-full h-screen flex flex-col items-center justify-center ">
+    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none"></div>
+    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
+      <div class="content  rounded-lg w-[40%] h-[80%]  p-8">
+        <h1 class="text-[40px] font-bold tracking-wide">Mystixia</h1>
+        <p class="mt-10"> Mystixia, a captivating cryptic hunt that pushed participants to their intellectual limits through a web of riddles, hidden clues, and mind-bending puzzles. Designed to test logic, lateral thinking, and digital sleuthing skills, the event led players through a multi-level challenge where each solved clue unlocked the path to the next. With its mysterious themes and cleverly crafted stages, Mystixia kept participants engaged, curious, and on edge throughout, making it one of our most mentally exhilarating events of the season.</p>
+      </div>
+      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
+          class="object-cover w-full h-full overflow-hidden" src="/timeline/mystixia.png" alt=""></div>
+
+    </div>
+  </div>
+  <div id="page6" class="page  w-full h-screen flex flex-col items-center justify-center ">
+    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none"></div>
+    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
+      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
+          class="object-cover w-full h-full overflow-hidden" src="/timeline/canard.JPG" alt=""></div>
+      <div class="content  rounded-lg w-[40%] h-[80%]  p-8 ">
+        <h1 class="text-[40px] font-bold tracking-wide">CΔnard</h1>
+        <p class="mt-10">A thrilling three-day experiential event that tested wit, teamwork, and tenacity. Day 1 kicked off with Gamathon, an adrenaline-fueled gaming tournament featuring a range of e-sports and casual games that brought out the competitive edge in participants. Day 2 shifted gears with a high-energy Physical Hunt, where players raced across campus solving cryptic clues across three intense phases, blending logic with real-time exploration. Finally, Day 3 culminated in the immersive Mystery Rooms, challenging teams to crack layered puzzles, escape scenarios, and uncover secrets under pressure. Canard was a perfect fusion of gaming, adventure, and mystery—leaving participants hooked till the very end.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="container3d" class="fixed inset-0 z-10 pointer-events-none"><canvas id="canvas"></canvas></div>
+
+
+</body>
+
+</html>

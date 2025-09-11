@@ -1,0 +1,46 @@
+<!-- views/admin/login.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Login</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+  </head>
+  <body
+    class="bg-gray-900 text-white flex justify-center items-center h-screen"
+  >
+    <form
+      method="POST"
+      action="/admin/login"
+      class="bg-gray-800 p-6 rounded shadow-md w-80"
+    >
+
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        required
+        class="w-full p-2 mb-3 text-black"
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        required
+        class="w-full p-2 mb-4 text-black"
+      />
+      <button
+        type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded"
+      >
+        Login
+      </button>
+
+      <h1 class="text-lg font-bold mb-4 text-center">Admin Login</h1>
+
+      <% if (error) { %>
+      <div class="text-red-500 text-sm mb-2"><%= error %></div>
+      <% } %>
+    </form>
+  </body>
+</html>

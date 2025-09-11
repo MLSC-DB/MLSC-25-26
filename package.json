@@ -1,0 +1,30 @@
+{
+  "name": "mlscregistration",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev:css": "npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "brcypt": "^1.0.1",
+    "dotenv": "^17.2.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "express-session": "^1.18.2",
+    "json2csv": "^6.0.0-alpha.2",
+    "mongoose": "^8.16.4",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.5",
+    "nodemon": "^3.1.10"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

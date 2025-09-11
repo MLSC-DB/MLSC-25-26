@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+  </head>
+  <body class="bg-black bg-[url(/images/bg.jpg)] bg-[auto_650px] sm:bg-[auto_1300px]">
+
+    <!-- Desktop Icons -->
+    <div id="container" class="container text-sm font-mono px-4">
+      <%- include('partials/desktop-icons') %>
+    </div>
+    
+    <%- include('partials/taskbar') %>
+    <%- include('partials/start-menu') %>
+    <%- include('partials/context-menu') %> 
+    <%- include('partials/notification') %>
+    <%- include('partials/preloader') %>
+
+    <script src="/js/script.js"></script>
+  </body>
+</html>

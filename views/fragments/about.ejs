@@ -1,0 +1,274 @@
+<!-- About MLSC Fragment - Popup Friendly -->
+<link
+  href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  .about-container {
+    background: linear-gradient(180deg, #000000 0%, #050505 100%);
+    font-family: "Press Start 2P", monospace;
+    color: #00ffcc;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    box-sizing: border-box;
+    padding: 1.5rem;
+  }
+
+  .about-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 204, 0.05),
+      rgba(0, 255, 204, 0.05) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 1;
+  }
+
+  .glitch-text {
+    animation: glitch 1.8s infinite;
+    text-shadow: 0 0 4px #00ffcc;
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes glitch {
+    0%,
+    100% {
+      text-shadow: 2px 0 red, -2px 0 cyan;
+    }
+    25% {
+      text-shadow: -2px 0 blue, 2px 0 lime;
+    }
+    50% {
+      text-shadow: 1px 0 green, -1px 0 yellow;
+    }
+    75% {
+      text-shadow: 3px 0 red, -3px 0 cyan;
+    }
+  }
+
+  .glow {
+    animation: pulseGlow 3s ease-in-out infinite;
+    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  }
+
+  @keyframes pulseGlow {
+    0%,
+    100% {
+      text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+    }
+    50% {
+      text-shadow: 0 0 10px #00ffee, 0 0 15px #00ffee, 0 0 25px #00ffee;
+    }
+  }
+
+  .content-box {
+    position: relative;
+    z-index: 2;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .about-container h1 {
+    font-size: 1.4rem;
+    margin-bottom: 1.8rem;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .about-container h2 {
+    color: #00bcd4;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .about-container p,
+  .about-container ul {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+  }
+
+  .about-container ul {
+    margin-left: 1.2rem;
+    padding-left: 0.8rem;
+  }
+
+  .about-container li {
+    margin-bottom: 0.5rem;
+    list-style-type: disc;
+  }
+
+  .about-container b {
+    color: #00ffee;
+  }
+
+  .about-container .text-white {
+    color: #ffffff;
+  }
+
+  .intro-text {
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+  }
+
+  .mission-section,
+  .activities-section,
+  .join-section {
+    margin-bottom: 2rem;
+  }
+
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #00ffcc, transparent);
+    margin: 1.5rem 0;
+    opacity: 0.5;
+  }
+
+  .activity-list li {
+    font-size: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .highlight {
+    color: #00ffee;
+    text-shadow: 0 0 3px #00ffee;
+  }
+
+  /* Additional animations */
+  .fade-in {
+    animation: fadeIn 2s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive adjustments for popup */
+  @media (max-width: 600px) {
+    .about-container {
+      padding: 1rem;
+    }
+
+    .about-container h1 {
+      font-size: 1.2rem;
+    }
+
+    .about-container h2 {
+      font-size: 0.9rem;
+    }
+
+    .about-container p,
+    .about-container ul {
+      font-size: 0.7rem;
+    }
+  }
+</style>
+
+<div class="about-container">
+  <div class="content-box fade-in">
+    <h1 class="glitch-text glow">> ABOUT MLSC DERABASSI</h1>
+
+    <p class="intro-text">
+      Welcome to the
+      <span class="highlight">Microsoft Learn Student Chapter</span> at Thapar
+      University, Derabassi Campus
+    </p>
+
+    <div class="section-divider"></div>
+
+    <p>
+      <span class="text-white">MLSC Derabassi</span> is the official Microsoft
+      Learn Student Chapter where technology meets innovation. We're a
+      student-led tech society passionate about building, innovating, and
+      exploring the frontiers of technology through collaborative learning and
+      hands-on projects.
+    </p>
+
+    <div class="mission-section">
+      <h2 class="glow">★ Our Mission</h2>
+      <p>
+        Empowering students to become future-ready creators and leaders by
+        providing opportunities to learn, build, and innovate with cutting-edge
+        technologies, while fostering a vibrant community of tech enthusiasts.
+      </p>
+    </div>
+
+    <div class="activities-section">
+      <h2 class="glow">★ What We Do</h2>
+      <ul class="activity-list">
+        <li>Organize codefests, gamathons, and interactive hackathons</li>
+        <li>Conduct workshops on web development, AI/ML, cloud computing & AR/VR</li>
+        <li>Foster a community of peer-to-peer learning and mentorship</li>
+        <li>Build impactful real-world projects with collaborative teams</li>
+        <li>Host tech talks and industry networking sessions</li>
+        <li>Mobile app development bootcamps</li>
+      </ul>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <h2 class="glow">★ Our Signature Events</h2>
+    <ul>
+      <li>
+        <b>Gaming Night</b> – A power-packed gaming marathon featuring eSports
+        tournaments and casual gaming fun
+      </li>
+      <li>
+        <b>Canard</b> – A three-day saga combining Gamathon, Physical Clue Hunt,
+        and Mystery Room challenges
+      </li>
+      <li>
+        <b>Mystixia</b> – A mind-bending cryptic hunt that blends logic,
+        detective work, and coding challenges
+      </li>
+      <li>
+        <b>Tech Workshops</b> – Hands-on sessions covering latest technologies
+        and industry trends
+      </li>
+    </ul>
+
+    <div class="join-section">
+      <h2 class="glow">★ Why Join MLSC?</h2>
+      <p>
+        Whether you're a <span class="highlight">coder</span>,
+        <span class="highlight">designer</span>,
+        <span class="highlight">gamer</span>, or just
+        <span class="highlight">curious</span> about technology — MLSC Derabassi
+        offers you a launchpad to grow and shine. Discover your passion,
+        experiment with innovative ideas, and build lasting memories in a
+        community that celebrates creativity and technological advancement.
+      </p>
+
+      <div class="section-divider"></div>
+
+      <p class="intro-text">
+        <span class="highlight">Join us</span> and be part of the next
+        generation of tech innovators! 🚀
+      </p>
+    </div>
+  </div>
+</div>

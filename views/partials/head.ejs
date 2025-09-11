@@ -1,0 +1,87 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simple HTML Page</title>
+
+<!-- Tailwind + Style -->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+<!-- Preloader Style & Base Styles -->
+<style>
+  @keyframes move-xp {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(600%); }
+  }
+
+  .loader-track {
+    animation: move-xp 3s linear infinite;
+  }
+
+  .bar-rect {
+    width: 16px; height: 100%;
+    background-color: skyblue;
+    margin-right: 2px;
+  }
+
+  .xp-btn {
+    font-family: Tahoma, sans-serif;
+    font-size: 12px; font-weight: bold;
+    padding: 2px 8px;
+    color: black;
+    background: linear-gradient(to bottom, #dbeeff, #7fbfff);
+    border: 1px solid #3a6ea5;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px #ffffffa1, inset 0 1px 0 0 #ffffffa1;
+    white-space: nowrap;
+    margin-right: 2px;
+    transition: background 0.2s ease-in-out;
+  }
+
+  .xp-btn:hover {
+    background: linear-gradient(to bottom, #c5e3ff, #66b2ff);
+  }
+
+  .xp-btn:active,
+  .xp-btn.active {
+    background: linear-gradient(to bottom, #7fbfff, #dbeeff);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.4);
+  }
+
+  .xp-taskbar-btn {
+    font-family: Tahoma, sans-serif;
+    box-shadow: inset 1px 1px white, inset -1px -1px #888;
+  }
+
+  .taskbar-btn {
+    border-width: 1px;
+    border-color: #808080;
+    background: linear-gradient(to bottom, #d4d0c8, #b5b5b5);
+    box-shadow: inset 1px 1px #fff, inset -1px -1px #808080;
+  }
+
+  .taskbar-btn:hover {
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .taskbar-btn.active-task {
+    background: linear-gradient(to bottom, #c0c0c0, #a0a0a0);
+    box-shadow: inset 1px 1px #ffffff, inset -1px -1px #808080;
+  }
+
+  .image-render-pixelated {
+    image-rendering: pixelated;
+  }
+
+  html,
+  body.lock-scroll {
+    overflow: clip !important;
+    height: 100vh !important;
+  }
+
+  html,
+  body {
+    max-height: 100vh;
+    overflow-x: hidden;
+  }
+</style>

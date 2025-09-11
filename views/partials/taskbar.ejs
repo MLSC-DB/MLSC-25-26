@@ -1,0 +1,26 @@
+<div
+  id="footer"
+  class="footer w-full h-12 bg-gradient-to-b from-[#d6dfea] to-[#b8cce4] border-t-2 border-[#5c95ca] shadow-inner z-1 absolute bottom-0 bg-yellow-50 flex items-center justify-between px-2"
+>
+  <!-- Left side: Start button and taskbar apps -->
+  <div class="flex items-center gap-1">
+    <button
+      class="start-button w-14 h-14 px-3 text-black hover:text-white hover:bg-blue-800 transition hover:cursor-pointer hover:bg-blue-90"
+      onclick="document.getElementById('start-menu').classList.toggle('hidden');"
+    >
+      <img src="/images/mlsclogo-2.png">
+    </button>
+    <div
+      id="taskbar-apps"
+      class="flex items-center gap-1 overflow-x-auto max-w-[60vw] pr-2 h-full"
+    ></div>
+  </div>
+
+  <!-- Right side: clock + copyright -->
+  <div class="flex items-center gap-4">
+    <div class="copyright font-mono hidden sm:block hover:cursor-default">
+      &copy; MLSC DB, 2025
+    </div>
+    <div class="font-mono hover:cursor-default" id="date-time"></div>
+  </div>
+</div>

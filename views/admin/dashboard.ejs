@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen p-8">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-6 text-center">
+      📋 Registrations Dashboard
+    </h1>
+    <form action="/admin/dashboard" method="GET" class="text-white mb-6 flex flex-wrap gap-4">
+      <% const queryParams=[]; if (filters.year) queryParams.push(`year=${filters.year}`); if (filters.domain)
+        queryParams.push(`domain=${filters.domain}`); if (filters.search) queryParams.push(`search=${filters.search}`);
+        const queryString=queryParams.join("&"); %>
+
+        <select name="year" class="bg-black text-white border px-2 py-1 text-sm">
+          <option value="">All Years</option>
+          <option value="First Year" <%=filters.year==='First Year' ? 'selected' : '' %>>First Year</option>
+          <option value="Second Year" <%=filters.year==='Second Year' ? 'selected' : '' %>>Second Year</option>
+        </select>
+
+        <select name="domain" class="bg-black text-white border px-2 py-1 text-sm">
+          <option value="">All Domains</option>
+          <option value="Tech" <%=filters.domain==='Tech' ? 'selected' : '' %>>Tech</option>
+          <option value="Design" <%=filters.domain==='Design' ? 'selected' : '' %>>Design</option>
+          <option value="Management" <%=filters.domain==='Management' ? 'selected' : '' %>>Management</option>
+        </select>
+        <input type="text" name="search" placeholder="Search by name or email" value="<%= filters.search || '' %>"
+          class="bg-black text-white border px-2 py-1 text-sm" />
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">Filter</button>
+        <a href="/admin/export?<%= queryString %>"
+          class="bg-green-600 text-white px-3 py-1 text-sm rounded hover:bg-green-700 ml-2">
+          Export CSV
+        </a>
+    </form>
+
+
+    <!-- <div class="text-center mb-6">
+        <a href="/admin/logout" class="text-red-500 hover:underline">Logout</a>
+      </div> -->
+    <div class="overflow-auto rounded shadow border border-gray-300">
+      <table class="min-w-full bg-white text-sm text-gray-800">
+        <thead class="bg-gray-100 sticky top-0 z-10">
+          <tr>
+            <th class="py-2 px-4 text-left">#</th>
+            <th class="py-2 px-4 text-left">Name</th>
+            <th class="py-2 px-4 text-left">Email</th>
+            <th class="py-2 px-4 text-left">Phone</th>
+            <th class="py-2 px-4 text-left">Year</th>
+            <th class="py-2 px-4 text-left">Domains</th>
+            <th class="py-2 px-4 text-left">Motivation</th>
+            <th class="py-2 px-4 text-left">Submitted At</th>
+            <th class="py-2 px-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% entries.forEach((entry, index)=> { %>
+            <tr class="<%= index % 2 === 0 ? 'bg-white' : 'bg-gray-50' %> hover:bg-gray-100 transition-all">
+              <td class="py-2 px-4">
+                <%= index + 1 %>
+              </td>
+              <td class="py-2 px-4">
+                <%= entry.name %>
+              </td>
+              <td class="py-2 px-4">
+                <%= entry.email %>
+              </td>
+              <td class="py-2 px-4">
+                <%= entry.phone %>
+              </td>
+              <td class="py-2 px-4">
+                <%= entry.yearOfStudy %>
+              </td>
+              <td class="py-2 px-4">
+                <%= entry.domainPreference1 %>
+                  <% if (entry.domainPreference2) { %>, <%= entry.domainPreference2 %>
+                      <% } %>
+                        <% if (entry.domainPreference3) { %>, <%= entry.domainPreference3 %>
+                            <% } %>
+              </td>
+              <td class="py-2 px-4">
+                <span class="text-blue-600 hover:underline cursor-pointer"
+                  onclick="showMotivation('<%= entry.motivation.replace(/'/g, '\\&#39;') %>')">
+                  <%= entry.motivation.length> 40 ? entry.motivation.slice(0, 40) + '...' : entry.motivation %>
+                </span>
+              </td>
+
+              <td class="py-2 px-4">
+                <%= entry.submittedAt ? new Date(entry.submittedAt).toLocaleString() : '—' %>
+              </td>
+              <td class="py-2 px-4">
+                <form action="/admin/delete/<%= entry._id %>" method="POST"
+                  onsubmit="return confirm('Are you sure you want to delete this entry?');">
+                  <button type="submit" class="text-red-600 hover:underline">Delete</button>
+                </form>
+              </td>
+
+            </tr>
+            <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-6">
+      <a href="/admin/logout" class="text-red-500 hover:underline">Logout</a>
+    </div>
+  </div>
+  <!-- Motivation Modal -->
+  <div id="motivation-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+    <div class="bg-white text-black max-w-lg w-full p-6 rounded shadow">
+      <h2 class="text-xl font-semibold mb-4">Full Motivation</h2>
+      <p id="modal-motivation-text" class="whitespace-pre-wrap"></p>
+      <div class="text-right mt-4">
+        <button onclick="closeMotivation()"
+          class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">Close</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    function showMotivation(text) {
+      document.getElementById("modal-motivation-text").textContent = text;
+      document.getElementById("motivation-modal").classList.remove("hidden");
+    }
+
+    function closeMotivation() {
+      document.getElementById("motivation-modal").classList.add("hidden");
+    }
+  </script>
+
+
+</body>
+
+</html>
