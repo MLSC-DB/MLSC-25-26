@@ -3,6 +3,12 @@ function bringToFront(win) {
   win.style.zIndex = ++zIndexCounter;
 }
 
+// disable scrolling on mobile
+document.addEventListener('touchmove', function (e) {
+  e.preventDefault();
+}, { passive: false });
+
+
 function makeDraggable(popup, header) {
   let isDragging = false,
     startX = 0,
@@ -10,30 +16,93 @@ function makeDraggable(popup, header) {
     origX = 0,
     origY = 0;
 
-  header.addEventListener("mousedown", function (e) {
+  function startDrag(clientX, clientY) {
     isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
+    startX = clientX;
+    startY = clientY;
     const rect = popup.getBoundingClientRect();
     origX = rect.left;
     origY = rect.top;
     popup.style.position = "fixed";
     document.body.style.userSelect = "none";
+  }
+
+  function drag(clientX, clientY) {
+    if (!isDragging) return;
+    let dx = clientX - startX;
+    let dy = clientY - startY;
+    popup.style.left = origX + dx + "px";
+    popup.style.top = origY + dy + "px";
+  }
+
+  function stopDrag() {
+    isDragging = false;
+    document.body.style.userSelect = "";
+  }
+
+  // --- Mouse Events ---
+  header.addEventListener("mousedown", function (e) {
+    startDrag(e.clientX, e.clientY);
   });
 
   document.addEventListener("mousemove", function (e) {
-    if (!isDragging) return;
-    let dx = e.clientX - startX;
-    let dy = e.clientY - startY;
-    popup.style.left = origX + dx + "px";
-    popup.style.top = origY + dy + "px";
+    drag(e.clientX, e.clientY);
   });
 
   document.addEventListener("mouseup", function () {
-    isDragging = false;
-    document.body.style.userSelect = "";
+    stopDrag();
+  });
+
+  // --- Touch Events ---
+  header.addEventListener("touchstart", function (e) {
+    if (e.touches.length === 1) { // single finger only
+      startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: false });
+
+  document.addEventListener("touchmove", function (e) {
+    if (e.touches.length === 1) {
+      drag(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: false });
+
+  document.addEventListener("touchend", function () {
+    stopDrag();
   });
 }
+
+
+// function makeDraggable(popup, header) {
+//   let isDragging = false,
+//     startX = 0,
+//     startY = 0,
+//     origX = 0,
+//     origY = 0;
+
+//   header.addEventListener("mousedown", function (e) {
+//     isDragging = true;
+//     startX = e.clientX;
+//     startY = e.clientY;
+//     const rect = popup.getBoundingClientRect();
+//     origX = rect.left;
+//     origY = rect.top;
+//     popup.style.position = "fixed";
+//     document.body.style.userSelect = "none";
+//   });
+
+//   document.addEventListener("mousemove", function (e) {
+//     if (!isDragging) return;
+//     let dx = e.clientX - startX;
+//     let dy = e.clientY - startY;
+//     popup.style.left = origX + dx + "px";
+//     popup.style.top = origY + dy + "px";
+//   });
+
+//   document.addEventListener("mouseup", function () {
+//     isDragging = false;
+//     document.body.style.userSelect = "";
+//   });
+// }
 
 // Preloader Hider
 window.addEventListener("DOMContentLoaded", function () {
@@ -376,10 +445,26 @@ function createAppWindow(id, title, url) {
   const popup = document.createElement("div");
   popup.id = id;
   popup.className =
-    "popup fixed bg-slate-600 border-2 border-slate-100 transition-all duration-300 scale-95 opacity-0 w-[600px] h-[400px]";
+    "popup fixed bg-slate-600 border-2 border-slate-100 transition-all duration-300 scale-95 opacity-0 w-[300px] h-[400px] sm:w-[600px] sm:h-[400px]";
   popup.dataset.state = "partial";
-  popup.style.left = "calc(50% - 300px)";
-  popup.style.top = "calc(50% - 200px)";
+
+  // Center for mobile, random for desktop
+  if (window.innerWidth < 640) {
+    // Mobile: center
+    popup.style.left = "50%";
+    popup.style.top = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+  } else {
+    // Desktop: random position
+    const winWidth = 600;
+    const winHeight = 400;
+    const maxX = window.innerWidth - winWidth;
+    const maxY = window.innerHeight - winHeight;
+    const randX = Math.floor(Math.random() * maxX);
+    const randY = Math.floor(Math.random() * maxY);
+    popup.style.left = `${randX}px`;
+    popup.style.top = `${randY}px`;
+  }
   popup.style.zIndex = ++zIndexCounter;
 
   // 3. Window header
@@ -443,9 +528,11 @@ function createAppWindow(id, title, url) {
   iconImg.alt = "icon";
   iconImg.className = "w-10 h-10 image-render-pixelated";
 
-  //  Add label text
+  //  Add label text (disable on small screens)
   const textSpan = document.createElement("span");
-  textSpan.textContent = title;
+  if (window.innerWidth >= 640) { // Show label only on screens >= 640px (sm)
+    textSpan.textContent = title;
+  }
 
   // Append icon first, then text
   taskBtn.appendChild(iconImg);
@@ -506,14 +593,25 @@ function createAppWindow(id, title, url) {
   // 10. Minimize/restore button
   header.querySelector(".minimize-btn").onclick = () => {
     if (popup.dataset.state === "fullscreen") {
-      popup.style.left = "calc(50% - 300px)";
-      popup.style.top = "calc(50% - 200px)";
-      popup.style.width = "600px";
-      popup.style.height = "400px";
+      if (window.innerWidth < 640) {
+        // Mobile: center
+        popup.style.left = "50%";
+        popup.style.top = "50%";
+        popup.style.transform = "translate(-50%, -50%)";
+        popup.style.width = "300px";
+        popup.style.height = "400px";
+      } else {
+        popup.style.left = "calc(50% - 300px)";
+        popup.style.top = "calc(50% - 200px)";
+        popup.style.transform = "";
+        popup.style.width = "600px";
+        popup.style.height = "400px";
+      }
       popup.dataset.state = "partial";
     } else {
       popup.style.left = "0";
       popup.style.top = "0";
+      popup.style.transform = "";
       popup.style.width = "100vw";
       popup.style.height = "100vh";
       popup.dataset.state = "fullscreen";
@@ -522,18 +620,8 @@ function createAppWindow(id, title, url) {
 
   // 11. Make draggable
   makeDraggable(popup, header);
-  // 12. Randomize position
-  const winWidth = 600;
-  const winHeight = 400;
 
-  const maxX = window.innerWidth - winWidth;
-  const maxY = window.innerHeight - winHeight;
-
-  const randX = Math.floor(Math.random() * maxX);
-  const randY = Math.floor(Math.random() * maxY);
-
-  popup.style.left = `${randX}px`;
-  popup.style.top = `${randY}px`;
+  // 12. Randomize position (already handled above for desktop)
   bringToFront(popup);
 }
 
