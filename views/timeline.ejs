@@ -69,83 +69,85 @@
   </style>
 </head>
 
-<body>
+<body class="bg-black min-h-screen w-full overflow-x-hidden">
   <!-- Back Button -->
   <a href="/" class="back-button">
     Home
   </a>
 
-  <div id="page1" class="page w-full h-screen  flex justify-center items-center">
-    <h1 class="text-white text-[150px]  z-30">MLSC TIMELINE</h1>
+  <div id="page1" class="page w-full min-h-screen flex justify-center items-center py-8">
+    <h1 class="text-white font-bold z-30 text-center leading-tight px-2 text-[48px] sm:text-[80px] md:text-[150px]">MLSC TIMELINE</h1>
   </div>
-  <div id="page2" class="page flex flex-col items-center justify-center  w-full h-screen ">
-    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none">
+  <div id="page2" class="page flex flex-col items-center justify-center w-full min-h-screen py-8">
+    <div class="heading flex justify-center items-center min-h-[40px] text-[24px] sm:text-[32px] md:text-[50px] font-bold select-none text-center px-2">
       <h1 class="overflow-hidden">PAST EVENTS ORGANIZED BY MLSC</h1>
     </div>
-    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
-      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
-          class="object-cover w-full h-full overflow-hidden" src="/timeline/delta.webp" alt=""></div>
-      <div class="content  rounded-lg w-[40%] h-[80%]  p-8">
-        <h1 class="text-[40px] font-bold tracking-wide">DeltΔ</h1>
-        <p class="mt-10">Delta, a three-day flagship event, featured a Cryptic Hunt on day 1, a Treasure Hunt on day 2,
+    <div id="event" class="flex flex-col md:flex-row w-full md:w-[90%] items-center justify-evenly rounded-lg mt-4 gap-4 md:gap-8">
+      <div class="photo rounded-lg w-full md:w-[50%] h-[180px] md:h-[80%] flex justify-center items-center overflow-hidden" id="pic">
+        <img class="object-cover w-full h-full" src="/timeline/delta.webp" alt="">
+      </div>
+      <div class="content rounded-lg w-full md:w-[40%] h-auto md:h-[80%] p-8">
+        <h1 class="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-wide">DeltΔ</h1>
+        <p class="mt-6 sm:mt-8 md:mt-10 text-sm sm:text-base">Delta, a three-day flagship event, featured a Cryptic Hunt on day 1, a Treasure Hunt on day 2,
           and a Gaming Night on day 3, offering participants a blend of challenging puzzles, adventurous quests, and
           competitive gaming.</p>
       </div>
     </div>
   </div>
-  <div id="page3" class="page w-full h-screen flex flex-col items-center justify-center ">
-    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none"></div>
-    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
-      <div class="content  rounded-lg w-[40%] h-[80%]  p-8">
-        <h1 class="text-[40px] font-bold tracking-wide">A$tellar</h1>
-        <p class="mt-10">Astellar featured a 24-hour Cryptic Hunt followed by a Gaming Night, offering participants the
+  <div id="page3" class="page w-full min-h-screen flex flex-col items-center justify-center py-8">
+    <div class="heading flex justify-center items-center min-h-[40px] text-[24px] sm:text-[32px] md:text-[50px] font-bold select-none text-center px-2"></div>
+    <div id="event" class="flex flex-col md:flex-row w-full md:w-[90%] items-center justify-evenly rounded-lg mt-4 gap-4 md:gap-8">
+      <div class="content rounded-lg w-full md:w-[40%] h-auto md:h-[80%] p-8">
+        <h1 class="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-wide">A$tellar</h1>
+        <p class="mt-6 sm:mt-8 md:mt-10 text-sm sm:text-base">Astellar featured a 24-hour Cryptic Hunt followed by a Gaming Night, offering participants the
           chance to win prizes worth ₹12,000. It combined intellectual challenge with competitive gaming for an engaging
           and rewarding experience.</p>
       </div>
-      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
-          class="object-cover w-full h-full overflow-hidden" src="/timeline/gamiing.webp" alt=""></div>
-
-    </div>
-  </div>
-  <div id="page4" class="page w-full h-screen flex flex-col items-center justify-center ">
-    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none"></div>
-    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
-      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
-          class="object-cover w-full h-full overflow-hidden" src="/timeline/gaming.png" alt=""></div>
-      <div class="content  rounded-lg w-[40%] h-[80%]  p-8">
-        <h1 class="text-[40px] font-bold tracking-wide">GΔming</h1>
-        <p class="mt-10">An electrifying Gaming Night, bringing together students for an evening packed with competitive spirit, teamwork, and pure fun. The event featured a mix of popular titles including Valorant, BGMI, FIFA, and several party games, creating a dynamic atmosphere that catered to both casual and hardcore gamers. From intense 1v1 battles to chaotic multiplayer showdowns, the night was a celebration of community and digital entertainment. With snacks, music, and plenty of memorable moments, Gaming Night turned out to be a massive hit—reminding everyone that tech isn’t just about code, but also about connection.</p>
+      <div class="photo rounded-lg w-full md:w-[50%] h-[180px] md:h-[80%] flex justify-center items-center overflow-hidden" id="pic">
+        <img class="object-cover w-full h-full" src="/timeline/gamiing.webp" alt="">
       </div>
     </div>
   </div>
-  </div>
-  <div id="page5" class="page w-full h-screen flex flex-col items-center justify-center ">
-    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none"></div>
-    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
-      <div class="content  rounded-lg w-[40%] h-[80%]  p-8">
-        <h1 class="text-[40px] font-bold tracking-wide">Mystixia</h1>
-        <p class="mt-10"> Mystixia, a captivating cryptic hunt that pushed participants to their intellectual limits through a web of riddles, hidden clues, and mind-bending puzzles. Designed to test logic, lateral thinking, and digital sleuthing skills, the event led players through a multi-level challenge where each solved clue unlocked the path to the next. With its mysterious themes and cleverly crafted stages, Mystixia kept participants engaged, curious, and on edge throughout, making it one of our most mentally exhilarating events of the season.</p>
+  <div id="page4" class="page w-full min-h-screen flex flex-col items-center justify-center py-8">
+    <div class="heading flex justify-center items-center min-h-[40px] text-[24px] sm:text-[32px] md:text-[50px] font-bold select-none text-center px-2"></div>
+    <div id="event" class="flex flex-col md:flex-row w-full md:w-[90%] items-center justify-evenly rounded-lg mt-4 gap-4 md:gap-8">
+      <div class="photo rounded-lg w-full md:w-[50%] h-[180px] md:h-[80%] flex justify-center items-center overflow-hidden" id="pic">
+        <img class="object-cover w-full h-full" src="/timeline/gaming.png" alt="">
       </div>
-      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
-          class="object-cover w-full h-full overflow-hidden" src="/timeline/mystixia.png" alt=""></div>
-
-    </div>
-  </div>
-  <div id="page6" class="page  w-full h-screen flex flex-col items-center justify-center ">
-    <div class="heading flex justify-center items-center h-[15%] text-[50px] font-bold select-none"></div>
-    <div id="event" class="flex h-[85%] w-[90%]   items-center justify-evenly rounded-lg">
-      <div class="photo  rounded-lg w-[50%] h-[80%]  flex justify-center items-center  overflow-hidden" id="pic"><img
-          class="object-cover w-full h-full overflow-hidden" src="/timeline/canard.JPG" alt=""></div>
-      <div class="content  rounded-lg w-[40%] h-[80%]  p-8 ">
-        <h1 class="text-[40px] font-bold tracking-wide">CΔnard</h1>
-        <p class="mt-10">A thrilling three-day experiential event that tested wit, teamwork, and tenacity. Day 1 kicked off with Gamathon, an adrenaline-fueled gaming tournament featuring a range of e-sports and casual games that brought out the competitive edge in participants. Day 2 shifted gears with a high-energy Physical Hunt, where players raced across campus solving cryptic clues across three intense phases, blending logic with real-time exploration. Finally, Day 3 culminated in the immersive Mystery Rooms, challenging teams to crack layered puzzles, escape scenarios, and uncover secrets under pressure. Canard was a perfect fusion of gaming, adventure, and mystery—leaving participants hooked till the very end.</p>
+      <div class="content rounded-lg w-full md:w-[40%] h-auto md:h-[80%] p-8">
+        <h1 class="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-wide">GΔming</h1>
+        <p class="mt-6 sm:mt-8 md:mt-10 text-sm sm:text-base">An electrifying Gaming Night, bringing together students for an evening packed with competitive spirit, teamwork, and pure fun. The event featured a mix of popular titles including Valorant, BGMI, FIFA, and several party games, creating a dynamic atmosphere that catered to both casual and hardcore gamers. From intense 1v1 battles to chaotic multiplayer showdowns, the night was a celebration of community and digital entertainment. With snacks, music, and plenty of memorable moments, Gaming Night turned out to be a massive hit—reminding everyone that tech isn’t just about code, but also about connection.</p>
       </div>
     </div>
   </div>
+  <div id="page5" class="page w-full min-h-screen flex flex-col items-center justify-center py-8">
+    <div class="heading flex justify-center items-center min-h-[40px] text-[24px] sm:text-[32px] md:text-[50px] font-bold select-none text-center px-2"></div>
+    <div id="event" class="flex flex-col md:flex-row w-full md:w-[90%] items-center justify-evenly rounded-lg mt-4 gap-4 md:gap-8">
+      <div class="content rounded-lg w-full md:w-[40%] h-auto md:h-[80%] p-8">
+        <h1 class="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-wide">Mystixia</h1>
+        <p class="mt-6 sm:mt-8 md:mt-10 text-sm sm:text-base"> Mystixia, a captivating cryptic hunt that pushed participants to their intellectual limits through a web of riddles, hidden clues, and mind-bending puzzles. Designed to test logic, lateral thinking, and digital sleuthing skills, the event led players through a multi-level challenge where each solved clue unlocked the path to the next. With its mysterious themes and cleverly crafted stages, Mystixia kept participants engaged, curious, and on edge throughout, making it one of our most mentally exhilarating events of the season.</p>
+      </div>
+      <div class="photo rounded-lg w-full md:w-[50%] h-[180px] md:h-[80%] flex justify-center items-center overflow-hidden" id="pic">
+        <img class="object-cover w-full h-full" src="/timeline/mystixia.png" alt="">
+      </div>
+    </div>
+  </div>
+  <div id="page6" class="page w-full min-h-screen flex flex-col items-center justify-center py-8">
+  <div class="heading flex justify-center items-center min-h-[40px] text-[24px] sm:text-[32px] md:text-[50px] font-bold select-none text-center px-2"></div>
+  <div id="event" class="flex flex-col md:flex-row w-full md:w-[90%] items-center justify-evenly rounded-lg mt-4 gap-4 md:gap-8">
+    <div class="photo rounded-lg w-full md:w-[50%] h-[180px] md:h-[80%] flex justify-center items-center overflow-hidden" id="pic">
+      <img class="object-cover w-full h-full" src="/timeline/canard.JPG" alt="">
+    </div>
+    <div class="content rounded-lg w-full md:w-[40%] h-auto md:h-[80%] p-8 overflow-auto">
+      <h1 class="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-normal">CΔnard</h1>
+      <p class="mt-6 sm:mt-8 md:mt-10 text-sm sm:text-base break-words">
+        A thrilling three-day experiential event that tested wit, teamwork, and tenacity. Day 1 kicked off with Gamathon, an adrenaline-fueled gaming tournament featuring a range of e-sports and casual games that brought out the competitive edge in participants. Day 2 shifted gears with a high-energy Physical Hunt, where players raced across campus solving cryptic clues across three intense phases, blending logic with real-time exploration. Finally, Day 3 culminated in the immersive Mystery Rooms, challenging teams to crack layered puzzles, escape scenarios, and uncover secrets under pressure. Canard was a perfect fusion of gaming, adventure, and mystery—leaving participants hooked till the very end.
+      </p>
+    </div>
+  </div>
+</div>
 
   <div id="container3d" class="fixed inset-0 z-10 pointer-events-none"><canvas id="canvas"></canvas></div>
-
-
 </body>
 
 </html>
