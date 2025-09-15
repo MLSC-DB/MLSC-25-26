@@ -1,0 +1,405 @@
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+  <link
+    as="style"
+    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Press+Start+2P&amp;family=VT323"
+    onload="this.rel='stylesheet'"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    rel="stylesheet"
+  />
+  <title>Tech Society Registration</title>
+  <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style type="text/tailwindcss">
+    :root {
+      --primary-color: #00bfff;
+      --secondary-color: #4d4dff;
+      --background-color: #0a192f;
+      --text-color: #ccd6f6;
+      --border-color: #00bfff;
+    }
+    body {
+      font-family: "VT323", monospace;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      position: relative;
+    }
+    .scanline-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(18, 18, 18, 0) 50%,
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+      animation: scanline 20s linear infinite;
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    @keyframes scanline {
+      0% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: 0 100vh;
+      }
+    }
+    .background-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(
+          to right,
+          rgba(0, 191, 255, 0.1) 1px,
+          transparent 1px
+        ),
+        linear-gradient(to bottom, rgba(0, 191, 255, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: move-circuit 30s linear infinite;
+      z-index: -1;
+      opacity: 0.5;
+    }
+    @keyframes move-circuit {
+      0% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: 100px 50px;
+      }
+    }
+    .background-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(
+          ellipse at 15% 85%,
+          var(--secondary-color),
+          transparent 50%
+        ),
+        radial-gradient(
+          ellipse at 85% 15%,
+          var(--primary-color),
+          transparent 60%
+        );
+      opacity: 0.2;
+      animation: pulse-glow 15s infinite alternate;
+      z-index: -2;
+    }
+    @keyframes pulse-glow {
+      0% {
+        opacity: 0.15;
+      }
+      50% {
+        opacity: 0.25;
+      }
+      100% {
+        opacity: 0.15;
+      }
+    }
+    h1,
+    h2 {
+      font-family: "Press Start 2P", cursive;
+    }
+    .pixelated-border {
+      border-style: solid;
+      border-width: 4px;
+      border-image-slice: 2;
+      border-image-width: 2;
+      border-image-repeat: stretch;
+      border-image-source: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="6" height="6"><g fill="#00BFFF"><path d="M0,2 V4 H2 V6 H4 V4 H6 V2 H4 V0 H2 V2Z" /></g></svg>');
+      border-image-outset: 2;
+      position: relative;
+      background-color: rgba(10, 25, 47, 0.9);
+    }
+    .pixelated-button {
+      background: linear-gradient(
+        45deg,
+        var(--secondary-color),
+        var(--primary-color)
+      );
+      border: 2px solid var(--primary-color);
+      color: var(--text-color);
+      text-transform: uppercase;
+      position: relative;
+      image-rendering: pixelated;
+      box-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-color),
+        inset 0 0 5px rgba(255, 255, 255, 0.3);
+      font-family: "Press Start 2P", cursive;
+      transition: all 0.3s ease;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 10px),
+        calc(100% - 10px) 100%,
+        0 100%
+      );
+    }
+    .pixelated-button:hover {
+      box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color),
+        0 0 30px var(--secondary-color), inset 0 0 8px rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+    }
+    .pixelated-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 0 5px var(--primary-color), inset 0 0 8px rgba(0, 0, 0, 0.5);
+    }
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background-color: rgba(13, 37, 63, 0.5);
+      border: 2px solid var(--border-color);
+      color: var(--text-color);
+      font-family: "VT323", monospace;
+      padding: 0.75rem;
+      image-rendering: pixelated;
+      transition: all 0.3s ease;
+    }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: 2px solid var(--primary-color);
+      box-shadow: 0 0 10px var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    .form-select {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2300BFFF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+    .radio-pixel:checked + label {
+      background-color: var(--primary-color);
+      color: var(--background-color);
+      border-color: var(--text-color);
+      box-shadow: 0 0 8px var(--primary-color);
+    }
+    .text-glow {
+      text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-color);
+    }
+  </style>
+</head>
+<body class="bg-[var(--background-color)] text-[var(--text-color)]">
+  <div class="scanline-overlay"></div>
+  <div class="background-overlay"></div>
+  <div class="background-glow"></div>
+  <div
+    class="relative flex h-auto min-h-screen w-full flex-col dark group/design-root overflow-x-hidden"
+  >
+    <div class="layout-container flex h-full grow flex-col items-center">
+      <main class="flex flex-1 justify-center py-16 px-4 w-full">
+        <div class="layout-content-container flex flex-col w-full max-w-3xl">
+          <div class="text-center mb-12">
+            <h1
+              class="text-4xl md:text-5xl font-bold leading-tight tracking-tighter mb-4 text-glow"
+            >
+              <span class="text-[var(--primary-color)]">TECH</span>
+              <span class="text-[var(--text-color)]">SOCIETY</span>
+            </h1>
+            <p class="text-xl md:text-2xl mt-2 text-slate-300">REGISTRATION</p>
+          </div>
+          <div class="pixelated-border p-8">
+            <form class="flex flex-col gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <label class="flex flex-col">
+                  <p
+                    class="text-lg font-medium leading-normal pb-2 text-slate-300"
+                  >
+                    Full Name
+                  </p>
+                  <input
+                    class="form-input"
+                    placeholder="Enter your full name"
+                    type="text"
+                  />
+                </label>
+                <label class="flex flex-col">
+                  <p
+                    class="text-lg font-medium leading-normal pb-2 text-slate-300"
+                  >
+                    Email
+                  </p>
+                  <input
+                    class="form-input"
+                    placeholder="Enter your email address"
+                    type="email"
+                  />
+                </label>
+              </div>
+              <label class="flex flex-col">
+                <p
+                  class="text-lg font-medium leading-normal pb-2 text-slate-300"
+                >
+                  Contact
+                </p>
+                <input
+                  class="form-input"
+                  placeholder="Enter your contact number"
+                  type="tel"
+                />
+              </label>
+              <div>
+                <p
+                  class="text-lg font-medium leading-normal pb-2 text-slate-300"
+                >
+                  Year of Study
+                </p>
+                <div class="flex flex-wrap gap-4">
+                  <input
+                    class="radio-pixel invisible absolute"
+                    id="year1"
+                    name="year_of_study"
+                    type="radio"
+                    value="1st Year"
+                  />
+                  <label
+                    class="text-lg font-medium leading-normal flex items-center justify-center border-2 border-[var(--border-color)] px-6 h-12 cursor-pointer transition-all hover:bg-[var(--primary-color)] hover:border-white hover:text-[var(--background-color)] font-bold text-slate-300"
+                    for="year1"
+                  >
+                    1st Year
+                  </label>
+                  <input
+                    class="radio-pixel invisible absolute"
+                    id="year2"
+                    name="year_of_study"
+                    type="radio"
+                    value="2nd Year"
+                  />
+                  <label
+                    class="text-lg font-medium leading-normal flex items-center justify-center border-2 border-[var(--border-color)] px-6 h-12 cursor-pointer transition-all hover:bg-[var(--primary-color)] hover:border-white hover:text-[var(--background-color)] font-bold text-slate-300"
+                    for="year2"
+                  >
+                    2nd Year
+                  </label>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <label class="flex flex-col">
+                  <p
+                    class="text-lg font-medium leading-normal pb-2 text-slate-300"
+                  >
+                    Skill 1
+                  </p>
+                  <select class="form-select text-lg">
+                    <option
+                      class="bg-[var(--background-color)]"
+                      disabled=""
+                      selected=""
+                      value=""
+                    >
+                      Select Skill
+                    </option>
+                    <option class="bg-[var(--background-color)]" value="Tech">
+                      Programming
+                    </option>
+                    <option class="bg-[var(--background-color)]" value="Design">
+                      UI/UX Design
+                    </option>
+                    <option
+                      class="bg-[var(--background-color)]"
+                      value="Management"
+                    >
+                      Project Mgmt
+                    </option>
+                  </select>
+                </label>
+                <label class="flex flex-col">
+                  <p
+                    class="text-lg font-medium leading-normal pb-2 text-slate-300"
+                  >
+                    Skill 2
+                  </p>
+                  <select class="form-select text-lg">
+                    <option
+                      class="bg-[var(--background-color)]"
+                      disabled=""
+                      selected=""
+                      value=""
+                    >
+                      Select Skill
+                    </option>
+                    <option class="bg-[var(--background-color)]" value="Tech">
+                      Hardware
+                    </option>
+                    <option class="bg-[var(--background-color)]" value="Design">
+                      Graphic Design
+                    </option>
+                    <option
+                      class="bg-[var(--background-color)]"
+                      value="Management"
+                    >
+                      Marketing
+                    </option>
+                  </select>
+                </label>
+                <label class="flex flex-col">
+                  <p
+                    class="text-lg font-medium leading-normal pb-2 text-slate-300"
+                  >
+                    Skill 3
+                  </p>
+                  <select class="form-select text-lg">
+                    <option
+                      class="bg-[var(--background-color)]"
+                      disabled=""
+                      selected=""
+                      value=""
+                    >
+                      Select Skill
+                    </option>
+                    <option class="bg-[var(--background-color)]" value="Tech">
+                      Cybersecurity
+                    </option>
+                    <option class="bg-[var(--background-color)]" value="Design">
+                      3D Modeling
+                    </option>
+                    <option
+                      class="bg-[var(--background-color)]"
+                      value="Management"
+                    >
+                      Public Speaking
+                    </option>
+                  </select>
+                </label>
+              </div>
+              <label class="flex flex-col">
+                <p
+                  class="text-lg font-medium leading-normal pb-2 text-slate-300"
+                >
+                  Interests
+                </p>
+                <textarea
+                  class="form-textarea min-h-36 text-lg"
+                  placeholder="Why do you want to join the society?"
+                ></textarea>
+              </label>
+              <div class="flex pt-4">
+                <button
+                  class="pixelated-button flex w-full cursor-pointer items-center justify-center h-14 px-6 text-sm leading-normal tracking-widest"
+                >
+                  <span class="truncate">Join Society</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>

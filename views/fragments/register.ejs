@@ -1,247 +1,393 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Recruitment Form</title>
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-
-    <style>
-      body {
-        font-family: "Pixelify Sans", sans-serif;
-        background-color: black;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-      }
-
-      .scan-wrapper {
-        position: absolute;
-        inset: 0;
-        z-index: -10;
-        pointer-events: none;
-      }
-
-      .scanline::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: repeating-linear-gradient(
-          to bottom,
-          rgba(1, 1, 1, 0.6) 0px,
-          rgba(16, 16, 16, 0.7) 2px,
-          transparent 2px,
-          transparent 4px
-        );
-        z-index: 1;
-        pointer-events: none;
-        animation: scanlineHorizontal 0.4s linear infinite;
-      }
-
-      @keyframes scanlineHorizontal {
-        0% {
-          background-position: 0 0;
-        }
-        100% {
-          background-position: 0 4px;
-        }
-      }
-
-      .vignette::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-          ellipse at center,
-          rgba(255, 255, 255, 0.06) 0%,
-          rgba(0, 0, 0, 0.6) 100%
-        );
-        mix-blend-mode: screen;
-        pointer-events: none;
-        filter: blur(0.5px);
-        z-index: 2;
-      }
-
-      .flicker {
-        animation: flicker 6s infinite;
-      }
-
-      @keyframes flicker {
-        0%,
-        18%,
-        22%,
-        25%,
-        53%,
-        57%,
-        100% {
-          opacity: 1;
-        }
-        20%,
-        24%,
-        55% {
-          opacity: 0.8;
-        }
-      }
-
-      ::-webkit-scrollbar {
-        display: none;
-      }
-    </style>
-  </head>
-
-  <body class="relative font-pixel">
-    <!-- 🎬 Background with effects -->
-    <div class="scan-wrapper">
-      <div class="w-full h-full relative flicker scanline vignette">
-        <img
-          src="/images/assets/registration/images/bg.jpg"
-          alt="Background"
-          class="w-full h-full object-cover"
-        />
-      </div>
+<link
+  href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+  rel="stylesheet"
+/>
+<div
+  class="register-popup wide-popup retro-popup"
+  style="
+    max-width: 2100px;
+    min-width: 400px;
+    width: 100%;
+    min-height: 90vh;
+    margin: 0 auto;
+    padding: 3.5rem 3rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+  "
+>
+  <h1 class="tech-header">
+    <span class="tech-title">MLSC</span>
+    <span class="society-title">REGISTRATIONS</span>
+  </h1>
+  <form class="retro-form" autocomplete="off">
+    <div class="retro-form-group">
+      <label for="name">Name</label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        placeholder="Your Name"
+        required
+      />
     </div>
-
-    <!-- 📝 Foreground Form (z-10) -->
-    <div
-      class="relative z-[10] flex justify-center items-center min-h-[100%] p-4"
-    >
-      <div
-        class="w-full max-w-md rounded-md shadow-lg text-white overflow-y-auto max-h-[90vh]"
-      >
-        <h2 class="text-center font-retro text-[30px] mb-10">
-          RECRUITMENT FORM
-        </h2>
-        <!-- Show validation errors -->
-        <% if (typeof errors !== "undefined" && errors.length > 0) { %>
-        <div class="bg-red-900 text-white p-3 mb-4 rounded text-sm">
-          <ul class="list-disc list-inside">
-            <% errors.forEach(function(error) { %>
-            <li><%= error %></li>
-            <% }) %>
-          </ul>
-        </div>
-        <% } %>
-
-        <form id="register-form" class="flex flex-col gap-5">
-          <input
-            name="name"
-            type="text"
-            placeholder="Enter your name"
-            value="<%= formData?.name || '' %>"
-            required
-            class="bg-red-950 border <%= formErrors?.name ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          />
-          <input
-            name="email"
-            type="email"
-            placeholder="Enter your E-MAIL"
-            value="<%= formData?.email || '' %>"
-            required
-            pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
-            class="bg-red-950 border <%= formErrors?.email ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          />
-          <input
-            name="phone"
-            type="tel"
-            placeholder="Phone Number"
-            value="<%= formData?.phone || '' %>"
-            required
-            pattern="[0-9]{10}"
-            class="bg-red-950 border <%= formErrors?.phone ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          />
-
-          <select
-            name="yearOfStudy"
-            required
-            class="bg-red-950 border <%= formErrors?.yearOfStudy ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          >
-            <option value="" disabled <%= !formData?.yearOfStudy ? "selected" : "" %>>Year of Study</option>
-            <option value="First Year" <%= formData?.yearOfStudy === "First Year" ? "selected" : "" %>>First Year</option>
-            <option value="Second Year" <%= formData?.yearOfStudy === "Second Year" ? "selected" : "" %>>Second Year</option>
-          </select>
-
-          <select
-            name="domainPreference1"
-            required
-            class="bg-red-950 border <%= formErrors?.domainPreference1 ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          >
-            <option value="" disabled <%= !formData?.domainPreference1 ? "selected" : "" %>>Domain Preference 1</option>
-            <option value="Tech" <%= formData?.domainPreference1 === "Tech" ? "selected" : "" %>>Tech</option>
-            <option value="Design" <%= formData?.domainPreference1 === "Design" ? "selected" : "" %>>Design</option>
-            <option value="Management" <%= formData?.domainPreference1 === "Management" ? "selected" : "" %>>Management</option>
-          </select>
-
-          <select
-            name="domainPreference2"
-            required
-            class="bg-red-950 border <%= formErrors?.domainPreference2 ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          >
-            <option value="" disabled <%= !formData?.domainPreference2 ? "selected" : "" %>>Domain Preference 2</option>
-            <option value="Tech" <%= formData?.domainPreference2 === "Tech" ? "selected" : "" %>>Tech</option>
-            <option value="Design" <%= formData?.domainPreference2 === "Design" ? "selected" : "" %>>Design</option>
-            <option value="Management" <%= formData?.domainPreference2 === "Management" ? "selected" : "" %>>Management</option>
-          </select>
-
-          <select
-            name="domainPreference3"
-            required
-            class="bg-red-950 border <%= formErrors?.domainPreference3 ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          >
-            <option value="" disabled <%= !formData?.domainPreference3 ? "selected" : "" %>>Domain Preference 3</option>
-            <option value="Tech" <%= formData?.domainPreference3 === "Tech" ? "selected" : "" %>>Tech</option>
-            <option value="Design" <%= formData?.domainPreference3 === "Design" ? "selected" : "" %>>Design</option>
-            <option value="Management" <%= formData?.domainPreference3 === "Management" ? "selected" : "" %>>Management</option>
-          </select>
-
-          <input
-            name="projects"
-            type="text"
-            placeholder="Projects"
-            class="bg-red-950 border <%= formErrors?.projects ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          />
-          <input
-            name="motivation"
-            type="text"
-            placeholder="Why do you want to join MLSC?"
-            required
-            class="bg-red-950 border <%= formErrors?.motivation ? 'border-red-500' : 'border-black' %> px-2 py-1 text-sm"
-          />
-
-          <button
-            type="submit"
-            class="relative flex justify-center items-center mt-4"
-          >
-            <img
-              src="/images/assets/registration/images/button.png"
-              alt="Submit"
-              width="100"
-              height="50"
-              class="hover:brightness-110 hover:scale-105 transition-all"
-            />
-            <span
-              class="absolute text-white font-retro text-[10px] pointer-events-none"
-              >SUBMIT</span
-            >
-          </button>
-          <% if (typeof errors !== "undefined" && errors.length > 0) { %>
-          <div class="bg-red-900 text-white p-3 mb-4 rounded text-sm">
-            <ul class="list-disc list-inside">
-              <% errors.forEach(function(error) { %>
-              <li><%= error %></li>
-              <% }) %>
-            </ul>
-          </div>
-          <% } %>
-        </form>
-      </div>
+    <div class="retro-form-group">
+      <label for="email">E-mail</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="you@example.com"
+        required
+      />
     </div>
-  </body>
-</html>
+    <div class="retro-form-group">
+      <label for="contact">Contact</label>
+      <input
+        id="contact"
+        name="contact"
+        type="text"
+        placeholder="+91"
+        required
+      />
+    </div>
+    <div class="retro-form-group">
+      <label for="year">Year Of Study</label>
+      <select id="year" name="year" required>
+        <option value="" selected disabled>Year of Study</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+      </select>
+    </div>
+    <div class="retro-form-group">
+      <label for="preference1">Preference 1</label>
+      <select id="preference1" name="preference1" required>
+        <option value="" selected disabled>Department Preference</option>
+        <option>Tech</option>
+        <option>Design</option>
+        <option>Management</option>
+      </select>
+    </div>
+    <div class="retro-form-group">
+      <label for="preference2">Preference 2</label>
+      <select id="preference2" name="preference2" required>
+        <option value="" selected disabled>Department Preference</option>
+        <option>Tech</option>
+        <option>Design</option>
+        <option>Management</option>
+      </select>
+    </div>
+    <div class="retro-form-group">
+      <label for="preference3">Preference 3</label>
+      <select id="preference3" name="preference3" required>
+        <option value="" selected disabled>Department Preference</option>
+        <option>Tech</option>
+        <option>Design</option>
+        <option>Management</option>
+      </select>
+    </div>
+    <div class="retro-form-group">
+      <label for="projects">Projects</label>
+      <input
+        id="projects"
+        name="projects"
+        type="text"
+        placeholder="Describe your projects"
+        required
+      />
+    </div>
+    <div class="retro-form-group">
+      <label for="why">Why?</label>
+      <input
+        id="why"
+        name="why"
+        type="text"
+        placeholder="Why do you want to join MLSC?"
+        required
+      />
+    </div>
+    <button type="submit" class="retro-btn">
+      <span class="glow">SUBMIT</span>
+    </button>
+  </form>
+</div>
+
+<script>
+  const fields = document.querySelectorAll("input, textarea");
+  const fakeCaret = document.createElement("div");
+  fakeCaret.classList.add("fake-caret");
+  document.body.appendChild(fakeCaret);
+
+  fields.forEach((field) => {
+    field.addEventListener("focus", () => {
+      fakeCaret.style.display = "block";
+      updateCaret(field);
+    });
+
+    field.addEventListener("blur", () => {
+      fakeCaret.style.display = "none";
+    });
+
+    ["input", "click", "keyup"].forEach((evt) => {
+      field.addEventListener(evt, () => updateCaret(field));
+    });
+  });
+
+  function updateCaret(field) {
+    const { selectionStart } = field;
+    const style = getComputedStyle(field);
+
+    // Build mirror span
+    const mirror = document.createElement("span");
+    mirror.style.position = "absolute";
+    mirror.style.visibility = "hidden";
+    mirror.style.whiteSpace = "pre";
+    mirror.style.font = style.font;
+    mirror.style.fontSize = style.fontSize;
+    mirror.style.fontFamily = style.fontFamily;
+    mirror.style.letterSpacing = style.letterSpacing;
+
+    // Fake container for alignment
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.visibility = "hidden";
+    container.style.whiteSpace = "pre";
+    container.style.font = style.font;
+    container.style.width = style.width;
+    container.style.padding = style.padding;
+    container.style.border = style.border;
+
+    // Text up to caret
+    mirror.textContent = field.value.substring(0, selectionStart) || ".";
+    container.appendChild(mirror);
+    document.body.appendChild(container);
+
+    const mirrorRect = mirror.getBoundingClientRect();
+    const fieldRect = field.getBoundingClientRect();
+
+    // Place Mario correctly
+    fakeCaret.style.left = `${fieldRect.left + mirrorRect.width - 3}px`;
+    fakeCaret.style.top = `${fieldRect.top + (fieldRect.height - 20) / 2}px`;
+
+    container.remove();
+  }
+</script>
+
+<style>
+  body {
+    overflow: hidden;
+  }
+  .retro-popup {
+    background: linear-gradient(135deg, #001f3f 80%, #003366 100%);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem;
+    position: relative;
+    max-width: 900px;
+    min-width: 280px;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 6px solid #00bfff;
+    border-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect x="0" y="0" width="8" height="8" fill="none" stroke="%2300bfff" stroke-width="2"/><rect x="2" y="2" width="4" height="4" fill="none" stroke="%2300bfff" stroke-width="1"/></svg>')
+      6 stretch;
+    box-shadow: 0 0 24px #00bfff88, 0 0 0 2px #00bfff;
+    font-family: "Press Start 2P", "VT323", monospace;
+  }
+  .retro-popup::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: linear-gradient(
+        to right,
+        rgba(0, 191, 255, 0.08) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, rgba(0, 191, 255, 0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
+    z-index: 0;
+    border-radius: 12px;
+  }
+  .tech-header {
+    font-family: "Press Start 2P", monospace;
+    font-size: 2.5rem;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    z-index: 1;
+    line-height: 1.1;
+  }
+  .tech-title {
+    color: #00bfff;
+    text-shadow: 0 0 8px #00bfff, 0 0 24px #00eaff, 0 0 2px #fff;
+    font-weight: bold;
+    font-size: 2.5rem;
+    margin-right: 0.5rem;
+    letter-spacing: 2px;
+    display: inline-block;
+  }
+  .society-title {
+    color: #ccd6f6;
+    text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff;
+    font-weight: bold;
+    font-size: 2.5rem;
+    display: inline-block;
+  }
+  .register-title {
+    color: #00eaff;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+    text-shadow: 0 0 6px #00eaff;
+    font-family: "VT323", monospace;
+    letter-spacing: 1px;
+  }
+
+  /* TECH SOCIETY header styles */
+  .tech-header {
+    font-family: "Press Start 2P", monospace;
+    font-size: 2.5rem;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    z-index: 1;
+    line-height: 1.1;
+  }
+  .tech-title {
+    color: #00bfff;
+    text-shadow: 0 0 8px #00bfff, 0 0 24px #00eaff, 0 0 2px #fff;
+    font-weight: bold;
+    font-size: 2.5rem;
+    margin-right: 0.5rem;
+    letter-spacing: 2px;
+    display: inline-block;
+  }
+  .society-title {
+    color: #ccd6f6;
+    text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff;
+    font-weight: bold;
+    font-size: 2.5rem;
+    display: inline-block;
+  }
+
+  .retro-heading {
+    font-family: "Press Start 2P", monospace;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #00bfff;
+    text-shadow: 0 0 8px #00bfff, 0 0 24px #00eaff, 0 0 2px #fff;
+    letter-spacing: 2px;
+    z-index: 1;
+  }
+
+  .retro-form {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    z-index: 1;
+  }
+
+  .retro-form-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .retro-form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #00eaff;
+    text-shadow: 0 0 4px #007bff;
+    font-family: "VT323", monospace;
+    letter-spacing: 1px;
+  }
+
+  .retro-form-group input,
+  .retro-form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #00bfff;
+    border-radius: 3px;
+    background-color: rgba(13, 37, 63, 0.7);
+    color: #ccd6f6;
+    font-size: 1rem;
+    font-family: "VT323", monospace;
+    image-rendering: pixelated;
+    box-shadow: 0 0 6px #00bfff44;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .retro-form-group input:focus,
+  .retro-form-group select:focus {
+    border-color: #00eaff;
+    outline: none;
+    box-shadow: 0 0 10px #00eaff88;
+  }
+
+  .retro-btn {
+    background: linear-gradient(90deg, #007bff 60%, #00eaff 100%);
+    color: #fff;
+    font-family: "Press Start 2P", monospace;
+    text-shadow: 0 0 6px #00eaff;
+    box-shadow: 0 0 12px #007bff88;
+    border: 2px solid #00eaff;
+    border-radius: 3px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: background 0.3s, box-shadow 0.3s;
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    letter-spacing: 1px;
+  }
+  .retro-btn:hover {
+    background: linear-gradient(90deg, #00eaff 60%, #007bff 100%);
+    box-shadow: 0 0 18px #00eaffcc;
+  }
+
+  @media (max-width: 600px) {
+    .retro-popup {
+      max-width: 100vw;
+      min-width: 0;
+      padding: 1rem 0.2rem;
+      border-radius: 0.7rem;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    .retro-form {
+      max-width: 100vw;
+      padding: 0;
+    }
+    .retro-heading {
+      font-size: 1.2rem;
+    }
+  }
+
+  .fake-caret {
+    position: absolute;
+    width: 2px;
+    height: 1.2em;
+    background-color: #007bff;
+    pointer-events: none;
+    display: none;
+  }
+</style>
