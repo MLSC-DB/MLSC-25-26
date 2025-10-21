@@ -4,10 +4,13 @@ function bringToFront(win) {
 }
 
 // disable scrolling on mobile
-document.addEventListener('touchmove', function (e) {
-  e.preventDefault();
-}, { passive: false });
-
+document.addEventListener(
+  "touchmove",
+  function (e) {
+    e.preventDefault();
+  },
+  { passive: false }
+);
 
 function makeDraggable(popup, header) {
   let isDragging = false,
@@ -54,23 +57,31 @@ function makeDraggable(popup, header) {
   });
 
   // --- Touch Events ---
-  header.addEventListener("touchstart", function (e) {
-    if (e.touches.length === 1) { // single finger only
-      startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    }
-  }, { passive: false });
+  header.addEventListener(
+    "touchstart",
+    function (e) {
+      if (e.touches.length === 1) {
+        // single finger only
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    },
+    { passive: false }
+  );
 
-  document.addEventListener("touchmove", function (e) {
-    if (e.touches.length === 1) {
-      drag(e.touches[0].clientX, e.touches[0].clientY);
-    }
-  }, { passive: false });
+  document.addEventListener(
+    "touchmove",
+    function (e) {
+      if (e.touches.length === 1) {
+        drag(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    },
+    { passive: false }
+  );
 
   document.addEventListener("touchend", function () {
     stopDrag();
   });
 }
-
 
 // function makeDraggable(popup, header) {
 //   let isDragging = false,
@@ -224,15 +235,18 @@ refreshDivs.forEach((div) => {
   });
 });
 
-// Notification Register Button
-document
-  .querySelector(".register-button")
-  .addEventListener("click", function () {
-    createAppWindow("win-register", "Registrations", "/fragments/register");
-
+// Notification Register Button -> navigate to full register page
+const regBtn = document.querySelector(".register-button");
+if (regBtn) {
+  regBtn.addEventListener("click", function (e) {
+    // allow normal anchor navigation; if it's not an anchor, navigate programmatically
+    if (regBtn.tagName.toLowerCase() !== "a") {
+      window.location.href = "/register";
+    }
     const notification = document.getElementById("notification");
-    notification.classList.add("hidden");
+    if (notification) notification.classList.add("hidden");
   });
+}
 
 // Notification Close Button
 document.querySelector(".notif-close").addEventListener("click", function () {
@@ -318,7 +332,9 @@ const iconMap = [
   },
   {
     selector: 'img[alt="Registrations"]',
-    url: "fragments/register",
+    action: () => {
+      window.location.href = "/register";
+    },
     title: "Registrations",
     id: "win-register",
   },
@@ -530,7 +546,8 @@ function createAppWindow(id, title, url) {
 
   //  Add label text (disable on small screens)
   const textSpan = document.createElement("span");
-  if (window.innerWidth >= 640) { // Show label only on screens >= 640px (sm)
+  if (window.innerWidth >= 640) {
+    // Show label only on screens >= 640px (sm)
     textSpan.textContent = title;
   }
 

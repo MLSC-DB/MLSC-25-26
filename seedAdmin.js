@@ -8,8 +8,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/mlscRegistrationDB", {
 });
 
 async function createAdmin() {
-  const username = "vanshaj";
-  const plainPassword = "adminhu123";
+  const username = "admin";
+  const plainPassword = "adminpassword";
 
   const existing = await Admin.findOne({ username });
   if (existing) {

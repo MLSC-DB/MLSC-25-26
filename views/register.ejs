@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MLSC Build-a-thon 2025 — Registration (Single Page)</title>
+
+    <!-- Tailwind CDN (forms plugin) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+
+  <!-- Register page stylesheet (public) -->
+  <link rel="stylesheet" href="/css/register-style.css">
+  </head>
+  <body>
+    <!-- Aurora soft pastel waves (decorative) -->
+    <div aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden">
+      <div
+        class="absolute -left-40 -top-40 w-[700px] h-[420px] rounded-full blur-[80px] opacity-60 aurora-left"
+      ></div>
+      <div
+        class="absolute right-[-120px] top-32 w-[520px] h-[360px] rounded-full blur-[72px] opacity-60 aurora-right"
+      ></div>
+    </div>
+
+    <div
+      class="min-h-screen flex items-start justify-center py-10 px-4 container-pad"
+    >
+      <div class="w-full max-w-4xl">
+        <!-- Header -->
+        <header class="mb-6 text-center">
+          <div class="inline-flex items-center gap-3 justify-center">
+            <div
+              class="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary to-accent shadow-[0_10px_30px_rgba(124,58,237,0.12)] animate-floaty"
+            >
+              <svg
+                class="w-6 h-6 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"
+              >
+                <path
+                  d="M12 2v7l6-3-6 10v-7L6 19l6-17z"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold">
+                MLSC Build-a-thon 2025
+              </h1>
+              <p class="text-sm text-slate-300 mt-0.5">
+                Open Innovation Hackathon — Microsoft Learn Student Chapter
+              </p>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main form -->
+        <main
+          class="glass rounded-2xl p-6 sm:p-8 shadow-lg border border-white/6"
+        >
+          <form
+            id="mlscForm"
+            class="space-y-6"
+            onsubmit="event.preventDefault(); submitRegistration();"
+          >
+            <!-- Personal (Member 1) -->
+            <section class="space-y-3">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold">
+                  Personal details — Member 1 (You)
+                </h2>
+                <div class="text-sm muted">Required</div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="block">
+                  <span class="text-sm muted">Full name *</span>
+                  <input
+                    id="name"
+                    name="name"
+                    required
+                    type="text"
+                    autocomplete="name"
+                    spellcheck="false"
+                    placeholder="Your full name"
+                    class="finput mt-2 w-full rounded-xl p-3"
+                  />
+                </label>
+
+                <label class="block">
+                  <span class="text-sm muted">Email *</span>
+                  <input
+                    id="email"
+                    name="email"
+                    required
+                    type="email"
+                    autocomplete="email"
+                    placeholder="you@college.edu"
+                    class="finput mt-2 w-full rounded-xl p-3"
+                  />
+                </label>
+
+                <label class="block">
+                  <span class="text-sm muted">Roll No *</span>
+                  <input
+                    id="roll"
+                    name="roll"
+                    required
+                    type="text"
+                    autocomplete="username"
+                    placeholder="e.g., 23CSE001"
+                    class="finput mt-2 w-full rounded-xl p-3"
+                  />
+                </label>
+
+                <label class="block">
+                  <span class="text-sm muted">Year *</span>
+                  <select
+                    id="year"
+                    name="year"
+                    required
+                    autocomplete="bday-year"
+                    class="finput mt-2 w-full rounded-xl p-3"
+                  >
+                    <option value="">Select year</option>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                  </select>
+                </label>
+
+                <label class="block">
+                  <span class="text-sm muted">Phone *</span>
+                  <input
+                    id="phone"
+                    name="phone"
+                    required
+                    type="tel"
+                    autocomplete="tel"
+                    placeholder="+91 98765 43210"
+                    class="finput mt-2 w-full rounded-xl p-3"
+                  />
+                </label>
+
+                <label class="block">
+                  <span class="text-sm muted">Discord (username#0000) *</span>
+                  <input
+                    id="discord"
+                    name="discord"
+                    required
+                    type="text"
+                    autocomplete="nickname"
+                    placeholder="username#1234"
+                    class="finput mt-2 w-full rounded-xl p-3"
+                  />
+                </label>
+              </div>
+
+              <div class="pt-3 border-t border-white/6">
+                <p class="text-sm font-medium muted mb-2">
+                  Do you want to join MLSC?
+                </p>
+                <div class="flex gap-6 items-center">
+                  <label class="inline-flex items-center gap-2"
+                    ><input
+                      type="radio"
+                      name="mlsc_member_1"
+                      value="yes"
+                      class="mlsc-radio"
+                    /><span>Yes</span></label
+                  >
+                  <label class="inline-flex items-center gap-2"
+                    ><input
+                      type="radio"
+                      name="mlsc_member_1"
+                      value="no"
+                      class="mlsc-radio"
+                    /><span>No</span></label
+                  >
+                  <label class="inline-flex items-center gap-2"
+                    ><input
+                      type="radio"
+                      name="mlsc_member_1"
+                      value="not-sure"
+                      class="mlsc-radio"
+                    /><span>Not sure</span></label
+                  >
+                </div>
+              </div>
+            </section>
+
+            <!-- Preferences (hidden until member 1's mlsc radio is yes/not-sure) -->
+            <section
+              id="preferencesSection"
+              class="pref-hidden space-y-3 pt-4 border-t border-white/6"
+              aria-hidden="true"
+              aria-live="polite"
+            >
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold">Preferences</h2>
+                <div class="text-sm muted">Choose your role interests</div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <label class="block">
+                  <span class="text-sm muted">First pref *</span>
+                  <select
+                    id="pref1"
+                    name="pref1"
+                    class="mt-2 w-full rounded-xl p-3 finput"
+                  >
+                    <option value="">Select</option>
+                    <option value="tech">Tech</option>
+                    <option value="design">Design</option>
+                    <option value="management">Management</option>
+                  </select>
+                </label>
+
+                <label class="block">
+                  <span class="text-sm muted">Second pref</span>
+                  <select
+                    id="pref2"
+                    name="pref2"
+                    class="mt-2 w-full rounded-xl p-3 finput"
+                  >
+                    <option value="">No other preference</option>
+                    <option value="tech">Tech</option>
+                    <option value="design">Design</option>
+                    <option value="management">Management</option>
+                  </select>
+                </label>
+
+                <label class="block">
+                  <span class="text-sm muted">Third pref</span>
+                  <select
+                    id="pref3"
+                    name="pref3"
+                    class="mt-2 w-full rounded-xl p-3 finput"
+                  >
+                    <option value="">No other preference</option>
+                    <option value="tech">Tech</option>
+                    <option value="design">Design</option>
+                    <option value="management">Management</option>
+                  </select>
+                </label>
+              </div>
+            </section>
+
+            <!-- Team details — members 2,3,4 (optional) -->
+            <section class="space-y-3 pt-4 border-t border-white/6">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold">
+                  Team details — Members (optional)
+                </h2>
+                <div class="text-sm muted">Leave blank if none</div>
+              </div>
+
+              <div class="space-y-3">
+                <div
+                  class="p-3 rounded-lg bg-amber-900/20 border border-amber-800 text-amber-200 text-sm"
+                >
+                  Teams must have exactly 4 members. You may register
+                  solo/duo/trio — we'll help fill spots later.
+                </div>
+              </div>
+
+              <label class="block">
+                <span class="text-sm muted">Team name</span>
+                <input
+                  id="teamName"
+                  name="teamName"
+                  autocomplete="organization"
+                  spellcheck="false"
+                  type="text"
+                  placeholder="Team Awesome"
+                  class="finput mt-2 w-full rounded-xl p-3"
+                />
+              </label>
+
+              <p class="text-xs text-emerald-300/90 mb-2">
+                (Tip: leave member cards blank if not applicable; all member
+                fields are optional.)
+              </p>
+
+              <!-- Member 2 -->
+              <div
+                id="member-2"
+                class="member-card p-4 rounded-xl border border-[#22223c] bg-[#071122] space-y-3"
+              >
+                <div class="flex items-center justify-between">
+                  <h3 class="font-semibold">Member 2</h3>
+                  <div class="text-xs muted">optional</div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    name="member2_name"
+                    placeholder="Full name"
+                    autocomplete="name"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member2_email"
+                    autocomplete="email"
+                    placeholder="Email"
+                    type="email"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member2_roll"
+                    autocomplete="username"
+                    placeholder="Roll number"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member2_phone"
+                    autocomplete="tel"
+                    placeholder="Phone"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member2_discord"
+                    autocomplete="nickname"
+                    placeholder="Discord (username#0000)"
+                    class="finput rounded-xl p-3"
+                  />
+                  <select
+                    name="member2_year"
+                    autocomplete="bday-year"
+                    class="finput rounded-xl p-3"
+                    aria-label="Member 2 year"
+                  >
+                    <option value="">Select year</option>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                  </select>
+                </div>
+
+                <div class="pt-2">
+                  <p class="text-sm muted">Do you want to join MLSC?</p>
+                  <div class="flex gap-6 items-center">
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_2"
+                        value="yes"
+                        class="mlsc-radio"
+                      /><span>Yes</span></label
+                    >
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_2"
+                        value="no"
+                        class="mlsc-radio"
+                      /><span>No</span></label
+                    >
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_2"
+                        value="not-sure"
+                        class="mlsc-radio"
+                      /><span>Not sure</span></label
+                    >
+                  </div>
+                </div>
+
+                <!-- Preferences for Member 2 (hidden by default) -->
+                <div
+                  id="preferences_member_2"
+                  class="pref-hidden space-y-3 pt-4 border-t border-white/6"
+                  aria-hidden="true"
+                >
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-md font-medium">Member 2 preferences</h4>
+                    <div class="text-sm muted">Choose your role interests</div>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <label class="block"
+                      ><span class="text-sm muted">First pref *</span
+                      ><select
+                        id="member2_pref1"
+                        name="member2_pref1"
+                        class="mt-2 w-full rounded-xl p-3 finput member-pref1"
+                      ></select
+                    ></label>
+                    <label class="block"
+                      ><span class="text-sm muted">Second pref</span
+                      ><select
+                        id="member2_pref2"
+                        name="member2_pref2"
+                        class="mt-2 w-full rounded-xl p-3 finput"
+                      ></select
+                    ></label>
+                    <label class="block"
+                      ><span class="text-sm muted">Third pref</span
+                      ><select
+                        id="member2_pref3"
+                        name="member2_pref3"
+                        class="mt-2 w-full rounded-xl p-3 finput"
+                      ></select
+                    ></label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Member 3 -->
+              <div
+                id="member-3"
+                class="member-card p-4 rounded-xl border border-[#22223c] bg-[#071122] space-y-3"
+              >
+                <div class="flex items-center justify-between">
+                  <h3 class="font-semibold">Member 3</h3>
+                  <div class="text-xs muted">optional</div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    name="member3_name"
+                    placeholder="Full name"
+                    autocomplete="name"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member3_email"
+                    autocomplete="email"
+                    placeholder="Email"
+                    type="email"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member3_roll"
+                    autocomplete="username"
+                    placeholder="Roll number"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member3_phone"
+                    autocomplete="tel"
+                    placeholder="Phone"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member3_discord"
+                    autocomplete="nickname"
+                    placeholder="Discord (username#0000)"
+                    class="finput rounded-xl p-3"
+                  />
+                  <select
+                    name="member3_year"
+                    autocomplete="bday-year"
+                    class="finput rounded-xl p-3"
+                    aria-label="Member 3 year"
+                  >
+                    <option value="">Select year</option>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                  </select>
+                </div>
+
+                <div class="pt-2">
+                  <p class="text-sm muted">Do you want to join MLSC?</p>
+                  <div class="flex gap-6 items-center">
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_3"
+                        value="yes"
+                        class="mlsc-radio"
+                      /><span>Yes</span></label
+                    >
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_3"
+                        value="no"
+                        class="mlsc-radio"
+                      /><span>No</span></label
+                    >
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_3"
+                        value="not-sure"
+                        class="mlsc-radio"
+                      /><span>Not sure</span></label
+                    >
+                  </div>
+                </div>
+                <!-- Preferences for Member 3 (hidden by default) -->
+                <div
+                  id="preferences_member_3"
+                  class="pref-hidden space-y-3 pt-4 border-t border-white/6"
+                  aria-hidden="true"
+                >
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-md font-medium">Member 3 preferences</h4>
+                    <div class="text-sm muted">Choose your role interests</div>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <label class="block"
+                      ><span class="text-sm muted">First pref *</span
+                      ><select
+                        id="member3_pref1"
+                        name="member3_pref1"
+                        class="mt-2 w-full rounded-xl p-3 finput member-pref1"
+                      ></select
+                    ></label>
+                    <label class="block"
+                      ><span class="text-sm muted">Second pref</span
+                      ><select
+                        id="member3_pref2"
+                        name="member3_pref2"
+                        class="mt-2 w-full rounded-xl p-3 finput"
+                      ></select
+                    ></label>
+                    <label class="block"
+                      ><span class="text-sm muted">Third pref</span
+                      ><select
+                        id="member3_pref3"
+                        name="member3_pref3"
+                        class="mt-2 w-full rounded-xl p-3 finput"
+                      ></select
+                    ></label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Member 4 -->
+              <div
+                id="member-4"
+                class="member-card p-4 rounded-xl border border-[#22223c] bg-[#071122] space-y-3"
+              >
+                <div class="flex items-center justify-between">
+                  <h3 class="font-semibold">Member 4</h3>
+                  <div class="text-xs muted">optional</div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    name="member4_name"
+                    placeholder="Full name"
+                    autocomplete="name"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member4_email"
+                    autocomplete="email"
+                    placeholder="Email"
+                    type="email"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member4_roll"
+                    autocomplete="username"
+                    placeholder="Roll number"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member4_phone"
+                    autocomplete="tel"
+                    placeholder="Phone"
+                    class="finput rounded-xl p-3"
+                  />
+                  <input
+                    name="member4_discord"
+                    autocomplete="nickname"
+                    placeholder="Discord (username#0000)"
+                    class="finput rounded-xl p-3"
+                  />
+                  <select
+                    name="member4_year"
+                    autocomplete="bday-year"
+                    class="finput rounded-xl p-3"
+                    aria-label="Member 4 year"
+                  >
+                    <option value="">Select year</option>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                  </select>
+                </div>
+
+                <div class="pt-2">
+                  <p class="text-sm muted">Do you want to join MLSC?</p>
+                  <div class="flex gap-6 items-center">
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_4"
+                        value="yes"
+                        class="mlsc-radio"
+                      /><span>Yes</span></label
+                    >
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_4"
+                        value="no"
+                        class="mlsc-radio"
+                      /><span>No</span></label
+                    >
+                    <label class="inline-flex items-center gap-2"
+                      ><input
+                        type="radio"
+                        name="mlsc_member_4"
+                        value="not-sure"
+                        class="mlsc-radio"
+                      /><span>Not sure</span></label
+                    >
+                  </div>
+                </div>
+                <!-- Preferences for Member 4 (hidden by default) -->
+                <div
+                  id="preferences_member_4"
+                  class="pref-hidden space-y-3 pt-4 border-t border-white/6"
+                  aria-hidden="true"
+                >
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-md font-medium">Member 4 preferences</h4>
+                    <div class="text-sm muted">Choose your role interests</div>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <label class="block"
+                      ><span class="text-sm muted">First pref *</span
+                      ><select
+                        id="member4_pref1"
+                        name="member4_pref1"
+                        class="mt-2 w-full rounded-xl p-3 finput member-pref1"
+                      ></select
+                    ></label>
+                    <label class="block"
+                      ><span class="text-sm muted">Second pref</span
+                      ><select
+                        id="member4_pref2"
+                        name="member4_pref2"
+                        class="mt-2 w-full rounded-xl p-3 finput"
+                      ></select
+                    ></label>
+                    <label class="block"
+                      ><span class="text-sm muted">Third pref</span
+                      ><select
+                        id="member4_pref3"
+                        name="member4_pref3"
+                        class="mt-2 w-full rounded-xl p-3 finput"
+                      ></select
+                    ></label>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <!-- Agreements -->
+            <section class="space-y-3 pt-4 border-t border-white/6">
+              <div class="pt-2">
+                <div class="space-y-2 mt-3">
+                  <label class="flex items-start gap-3"
+                    ><input
+                      id="agree1"
+                      type="checkbox"
+                      required
+                      class="mt-1"
+                    /><span class="text-sm"
+                      >I confirm the information provided is accurate.</span
+                    ></label
+                  >
+                  <label class="flex items-start gap-3"
+                    ><input
+                      id="agree2"
+                      type="checkbox"
+                      required
+                      class="mt-1"
+                    /><span class="text-sm"
+                      >I agree to follow the Build-a-thon rules & code of
+                      conduct.</span
+                    ></label
+                  >
+                  <label class="flex items-start"
+                    ><input id="agree3" type="checkbox" required class="mt-1 mr-3" />
+                    <span class="text-sm"
+                      >I understand teams must have exactly 4 members and agree
+                      to collaborate with assigned teammates if needed.</span
+                    ></label
+                  
+                </div>
+              </div>
+
+              <div class="flex justify-end mt-4">
+                <div class="flex items-center gap-3">
+                  <button
+                    id="clearFormBtn"
+                    type="button"
+                    class="px-4 py-2 rounded-xl bg-white/6 text-red-500 hover:bg-white/10"
+                  >
+                    Clear form
+                  </button>
+                  <button
+                    type="submit"
+                    class="px-5 py-2 rounded-xl bg-emerald-500 text-white glow-accent"
+                  >
+                    Submit Registration
+                  </button>
+                </div>
+              </div>
+            </section>
+          </form>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-6 text-center text-sm text-slate-400">
+          Questions? Contact
+          <a href="mailto:mlsc@college.edu" class="underline text-slate-200"
+            >mlsc@college.edu</a
+          >
+        </footer>
+      </div>
+    </div>
+
+    <!-- Confirmation modal -->
+    <div
+      id="confirmModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirmTitle"
+      aria-describedby="confirmDesc"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4"
+    >
+      <div
+        class="bg-[#0f1724] rounded-2xl border border-white/6 p-6 w-full max-w-md text-center"
+      >
+        <div
+          class="w-16 h-16 rounded-full mx-auto mb-4 bg-gradient-to-br from-emerald-400 to-primary flex items-center justify-center shadow-lg"
+        >
+          <svg
+            class="w-8 h-8 text-white"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+          >
+            <path
+              d="M5 13l4 4L19 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <h3 id="confirmTitle" class="text-lg font-semibold">Thank you — registration received</h3>
+        <p id="confirmDesc" class="text-sm text-slate-300 mt-2">
+          We've received your registration. A copy of the submitted details has been sent to your email and the registered emails of your teammates. Please check your inbox (and spam folder). Also join our Discord for hackathon updates:
+        </p>
+        <div class="mt-3">
+          <a id="discordLink" href="https://discord.gg/your-server" target="_blank" rel="noopener noreferrer" class="underline text-emerald-300">Join our Discord</a>
+        </div>
+        <div class="mt-4 flex justify-center gap-3">
+          <button
+            id="closeModalBtn"
+            class="px-4 py-2 rounded-lg bg-white/6 text-slate-100"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ensure browser spellcheck is disabled for all inputs/textareas on this page -->
+    <script>
+      (function(){
+        function disableSpellcheck(root){
+          try{
+            var els = (root || document).querySelectorAll('input, textarea, select');
+            els.forEach(function(el){
+              try{ el.spellcheck = false; el.setAttribute('spellcheck','false'); }catch(e){}
+            });
+          }catch(e){}
+        }
+
+        // Run early and on DOMContentLoaded
+        disableSpellcheck(document);
+        document.addEventListener('DOMContentLoaded', function(){ disableSpellcheck(document); });
+
+        // Observe additions to the form (in case scripts add elements later)
+        if(window.MutationObserver){
+          var obs = new MutationObserver(function(muts){
+            muts.forEach(function(m){
+              if(m.addedNodes && m.addedNodes.length){
+                m.addedNodes.forEach(function(node){
+                  if(node && node.querySelectorAll){ disableSpellcheck(node); }
+                });
+              }
+            });
+          });
+          obs.observe(document.documentElement || document.body, { childList:true, subtree:true });
+        }
+      })();
+    </script>
+
+    <!-- Register page script (public) -->
+    <script src="/js/register-main.js"></script>
+  </body>
+</html>
