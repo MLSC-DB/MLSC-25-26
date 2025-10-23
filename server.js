@@ -1151,8 +1151,17 @@ app.post("/register", upload.none(), async (req, res) => {
   try {
     // DEBUG: Log the incoming data
     console.log("🔍 DEBUG - Registration data:", {
-      name, email, roll, discord, phone, year, joinmlsc, teamName,
-      agree1, agree2, agree3
+      name,
+      email,
+      roll,
+      discord,
+      phone,
+      year,
+      joinmlsc,
+      teamName,
+      agree1,
+      agree2,
+      agree3,
     });
 
     // Always store 4 member objects per team, blank fields except preferences as 'NA' if blank
@@ -1177,7 +1186,11 @@ app.post("/register", upload.none(), async (req, res) => {
         roll: m.roll || "",
         phone: m.phone || "",
         discord: m.discord || "",
-        yearOfStudy: m.yearOfStudy && (m.yearOfStudy === "First Year" || m.yearOfStudy === "Second Year") ? m.yearOfStudy : undefined,
+        yearOfStudy:
+          m.yearOfStudy &&
+          (m.yearOfStudy === "First Year" || m.yearOfStudy === "Second Year")
+            ? m.yearOfStudy
+            : undefined,
         joinmlsc: m.joinmlsc || "",
         preferences: {
           pref1:
@@ -1195,13 +1208,29 @@ app.post("/register", upload.none(), async (req, res) => {
         },
       })),
     ];
-    console.log("🔍 DEBUG - allMembers before filtering:", allMembers.length, allMembers.map(m => ({ name: m.name, hasData: !!(m.name || m.email || m.roll) })));
-    
+    console.log(
+      "🔍 DEBUG - allMembers before filtering:",
+      allMembers.length,
+      allMembers.map((m) => ({
+        name: m.name,
+        hasData: !!(m.name || m.email || m.roll),
+      }))
+    );
+
     // Filter out completely empty members to avoid schema validation issues
-    const nonEmptyMembers = allMembers.filter(m => !!(m.name || m.email || m.roll));
-    console.log("🔍 DEBUG - nonEmptyMembers after filtering:", nonEmptyMembers.length);
-    const yearOfStudy = year === "1" ? "First Year" : year === "2" ? "Second Year" : year;
-    console.log("🔍 DEBUG - Transformed year:", { originalYear: year, yearOfStudy });
+    const nonEmptyMembers = allMembers.filter(
+      (m) => !!(m.name || m.email || m.roll)
+    );
+    console.log(
+      "🔍 DEBUG - nonEmptyMembers after filtering:",
+      nonEmptyMembers.length
+    );
+    const yearOfStudy =
+      year === "1" ? "First Year" : year === "2" ? "Second Year" : year;
+    console.log("🔍 DEBUG - Transformed year:", {
+      originalYear: year,
+      yearOfStudy,
+    });
 
     const toSave = {
       name,
@@ -1222,10 +1251,10 @@ app.post("/register", upload.none(), async (req, res) => {
     };
 
     console.log("🔍 DEBUG - Data to save:", JSON.stringify(toSave, null, 2));
-    
+
     const newEntry = new Registration(toSave);
     console.log("🔍 DEBUG - Created registration document");
-    
+
     await newEntry.save();
     console.log("🔍 DEBUG - Successfully saved to database");
 
@@ -1262,7 +1291,11 @@ app.post("/register", upload.none(), async (req, res) => {
     // Render thank you (full page)
     return res.render("fragments/thankyou", { name });
   } catch (err) {
-    console.error("Error saving to DB:", err);
+    console.error("🚨 Error saving to DB:", err);
+    console.error("🚨 Full error details:", JSON.stringify(err, null, 2));
+    if (err.errors) {
+      console.error("🚨 Validation errors:", err.errors);
+    }
     // detect duplicate key (usually email unique index)
     let userMessage = "An error occurred. Try again later.";
     let statusCode = 500;

@@ -49,7 +49,7 @@ const registrationSchema = new mongoose.Schema(
           roll: { type: String, trim: true },
           phone: { type: String, trim: true },
           discord: { type: String, trim: true },
-          yearOfStudy: { type: String, enum: ["First Year", "Second Year"] },
+          yearOfStudy: { type: String }, // Remove enum validation temporarily
           joinmlsc: { type: String },
           preferences: { type: Object },
         },

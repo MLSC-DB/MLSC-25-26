@@ -21,26 +21,27 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
+    "connect-mongo": "^5.1.0",
     "dotenv": "^17.2.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-rate-limit": "^8.0.1",
     "express-session": "^1.18.2",
-    "connect-mongo": "^5.1.0",
     "googleapis": "^164.0.0",
     "helmet": "^7.0.0",
-    "pino": "^8.18.0",
-    "pino-http": "^7.0.0",
-    "yargs": "^17.7.2",
     "json2csv": "^6.0.0-alpha.2",
     "mongoose": "^8.16.4",
     "multer": "^2.0.2",
+    "node-fetch": "^2.7.0",
     "nodemailer": "^7.0.5",
-    "pdfkit": "^0.13.0"
+    "pdfkit": "^0.13.0",
+    "pino": "^8.18.0",
+    "pino-http": "^7.0.0",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17",
     "nodemon": "^3.1.10",
-    "pino-pretty": "^9.2.0"
+    "pino-pretty": "^9.2.0",
+    "tailwindcss": "^3.4.17"
   }
 }

@@ -51,7 +51,7 @@ npm install
 - Use the production admin seeder script with environment variables for security:
 
   npm run seed:admin
-  
+
 - Or manually with environment variable:
 
   ADMIN_PASSWORD=YourSecurePassword node scripts/seed-production-admin.js

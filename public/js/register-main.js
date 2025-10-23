@@ -619,7 +619,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function autoSaveDraft() {
     try {
       const data = collectFormObject();
-      localStorage.setItem("mlsc_registration_draft", JSON.stringify(data, null, 2));
+      localStorage.setItem(
+        "mlsc_registration_draft",
+        JSON.stringify(data, null, 2)
+      );
     } catch (e) {
       console.warn("Auto-save failed:", e);
     }
