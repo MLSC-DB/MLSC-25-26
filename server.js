@@ -953,7 +953,7 @@ app.get("/admin/test-sheet", isAdmin, async (req, res) => {
 
 app.post("/register", upload.none(), async (req, res) => {
   const body = req.body || {};
-  
+
   console.log("🔍 RAW FORM DATA:", JSON.stringify(body, null, 2));
 
   // Basic personal required fields
@@ -1166,6 +1166,10 @@ app.post("/register", upload.none(), async (req, res) => {
       agree3,
     });
 
+    // Transform year to yearOfStudy BEFORE using it
+    const yearOfStudy =
+      year === "1" ? "First Year" : year === "2" ? "Second Year" : year;
+
     // Always store 4 member objects per team, blank fields except preferences as 'NA' if blank
     const allMembers = [
       {
@@ -1227,8 +1231,6 @@ app.post("/register", upload.none(), async (req, res) => {
       "🔍 DEBUG - nonEmptyMembers after filtering:",
       nonEmptyMembers.length
     );
-    const yearOfStudy =
-      year === "1" ? "First Year" : year === "2" ? "Second Year" : year;
     console.log("🔍 DEBUG - Transformed year:", {
       originalYear: year,
       yearOfStudy,
@@ -1302,7 +1304,7 @@ app.post("/register", upload.none(), async (req, res) => {
     if (err.errors) {
       console.error("🚨 Validation errors:", err.errors);
     }
-    
+
     // Store last error for debugging
     global.lastRegistrationError = {
       message: err && (err.message || err),
@@ -1310,7 +1312,7 @@ app.post("/register", upload.none(), async (req, res) => {
       stack: err && err.stack,
       errors: err && err.errors,
       timestamp: new Date().toISOString(),
-      dbState: mongoose.connection.readyState
+      dbState: mongoose.connection.readyState,
     };
     // detect duplicate key (usually email unique index)
     let userMessage = "An error occurred. Try again later.";
@@ -1357,7 +1359,7 @@ app.get("/debug-error", (req, res) => {
   res.json({
     lastError: global.lastRegistrationError || null,
     dbState: mongoose.connection.readyState,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -1374,8 +1376,8 @@ app.post("/debug-register", async (req, res) => {
     // Test 2: Create minimal registration
     console.log("Test 2: Creating minimal registration");
     const testData = {
-      name: "vasnhaj",  // From your actual form
-      email: "vsahram@gmail.com", // Fixed email 
+      name: "vasnhaj", // From your actual form
+      email: "vsahram@gmail.com", // Fixed email
       roll: "1024160114",
       discord: "vsharm",
       phone: "7973209774",
