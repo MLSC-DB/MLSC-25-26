@@ -615,6 +615,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }, timeout);
   }
 
+  // Auto-save draft function
+  function autoSaveDraft() {
+    try {
+      const data = collectFormObject();
+      localStorage.setItem("mlsc_registration_draft", JSON.stringify(data, null, 2));
+    } catch (e) {
+      console.warn("Auto-save failed:", e);
+    }
+  }
+
   // show inline error under a field element
   function showFieldError(el, message, timeout = 5000) {
     try {
@@ -700,6 +710,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // init wiring
   function init() {
+    // Add form submit handler
+    form?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      submitRegistration();
+    });
+
     wireMlscRadios();
     wireInputAutosave();
     wireIdeaCount();

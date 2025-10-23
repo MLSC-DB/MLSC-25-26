@@ -476,7 +476,7 @@ const helmetOptions = {
     ? {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "https:"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com", "https:"],
           styleSrc: ["'self'", "'unsafe-inline'", "https:"],
           imgSrc: ["'self'", "data:", "https:"],
           fontSrc: ["'self'", "https:"],
