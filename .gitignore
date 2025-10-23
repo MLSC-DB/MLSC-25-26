@@ -4,3 +4,18 @@ dist/
 build/
 logs
 *.log
+
+# Sensitive files
+service-account.json
+*.pem
+*.key
+
+# Development files
+cleanup-production.js
+test-*.js
+debug-*.js
+verify-*.js
+
+# Temporary files
+*.tmp
+*.temp

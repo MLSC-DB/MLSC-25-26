@@ -334,7 +334,7 @@ async function appendToGoogleSheet(entry) {
     // Use the members array directly from entry (which already includes the team leader)
     // The entry.members array already contains all team members including the leader
     const membersFromEntry = Array.isArray(entry.members) ? entry.members : [];
-    
+
     // Map each member and assign roles based on their position
     const members = membersFromEntry.map((m, i) => ({
       name: m.name || "",
@@ -940,8 +940,6 @@ app.get("/admin/test-sheet", isAdmin, async (req, res) => {
 app.post("/register", upload.none(), async (req, res) => {
   const body = req.body || {};
 
-  console.log("🔍 RAW FORM DATA:", JSON.stringify(body, null, 2));
-
   // Basic personal required fields
   const name = (body.name || "").toString().trim();
   const email = (body.email || "").toString().trim();
@@ -1137,21 +1135,6 @@ app.post("/register", upload.none(), async (req, res) => {
   }
 
   try {
-    // DEBUG: Log the incoming data
-    console.log("🔍 DEBUG - Registration data:", {
-      name,
-      email,
-      roll,
-      discord,
-      phone,
-      year,
-      joinmlsc,
-      teamName,
-      agree1,
-      agree2,
-      agree3,
-    });
-
     // Transform year to yearOfStudy BEFORE using it
     const yearOfStudy =
       year === "1" ? "First Year" : year === "2" ? "Second Year" : year;
@@ -1200,27 +1183,11 @@ app.post("/register", upload.none(), async (req, res) => {
         },
       })),
     ];
-    console.log(
-      "🔍 DEBUG - allMembers before filtering:",
-      allMembers.length,
-      allMembers.map((m) => ({
-        name: m.name,
-        hasData: !!(m.name || m.email || m.roll),
-      }))
-    );
 
     // Filter out completely empty members to avoid schema validation issues
     const nonEmptyMembers = allMembers.filter(
       (m) => !!(m.name || m.email || m.roll)
     );
-    console.log(
-      "🔍 DEBUG - nonEmptyMembers after filtering:",
-      nonEmptyMembers.length
-    );
-    console.log("🔍 DEBUG - Transformed year:", {
-      originalYear: year,
-      yearOfStudy,
-    });
 
     const toSave = {
       name,
@@ -1240,13 +1207,9 @@ app.post("/register", upload.none(), async (req, res) => {
       agreements: { agree1: !!agree1, agree2: !!agree2, agree3: !!agree3 },
     };
 
-    console.log("🔍 DEBUG - Data to save:", JSON.stringify(toSave, null, 2));
-
     const newEntry = new Registration(toSave);
-    console.log("🔍 DEBUG - Created registration document");
 
     await newEntry.save();
-    console.log("🔍 DEBUG - Successfully saved to database");
 
     // Best-effort: append to Google Sheets (won't block the response on failure)
     try {
@@ -1286,21 +1249,11 @@ app.post("/register", upload.none(), async (req, res) => {
     // Render thank you (full page)
     return res.render("fragments/thankyou", { name });
   } catch (err) {
-    console.error("🚨 Error saving to DB:", err);
-    console.error("🚨 Full error details:", JSON.stringify(err, null, 2));
+    console.error("Error saving to DB:", err);
     if (err.errors) {
-      console.error("🚨 Validation errors:", err.errors);
+      console.error("Validation errors:", err.errors);
     }
 
-    // Store last error for debugging
-    global.lastRegistrationError = {
-      message: err && (err.message || err),
-      code: err && err.code,
-      stack: err && err.stack,
-      errors: err && err.errors,
-      timestamp: new Date().toISOString(),
-      dbState: mongoose.connection.readyState,
-    };
     // detect duplicate key (usually email unique index)
     let userMessage = "An error occurred. Try again later.";
     let statusCode = 500;
@@ -1337,75 +1290,6 @@ app.post("/register", upload.none(), async (req, res) => {
     return res.status(statusCode).render("fragments/error", {
       title: "⚠️ Server error",
       message: userMessage,
-    });
-  }
-});
-
-// Debug endpoint to see last registration error
-app.get("/debug-error", (req, res) => {
-  res.json({
-    lastError: global.lastRegistrationError || null,
-    dbState: mongoose.connection.readyState,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// DEBUG: Simple registration test endpoint
-app.post("/debug-register", async (req, res) => {
-  try {
-    console.log("🔍 DEBUG ENDPOINT - Testing registration components...");
-
-    // Test 1: Database connection
-    console.log("Test 1: Database connection");
-    const dbState = mongoose.connection.readyState;
-    console.log("Database state:", dbState); // 1 = connected
-
-    // Test 2: Create minimal registration
-    console.log("Test 2: Creating minimal registration");
-    const testData = {
-      name: "vasnhaj", // From your actual form
-      email: "vsahram@gmail.com", // Fixed email
-      roll: "1024160114",
-      discord: "vsharm",
-      phone: "7973209774",
-      yearOfStudy: "First Year", // Transformed from year: "1"
-      domainPreference1: "", // Empty like form
-      domainPreference2: "",
-      domainPreference3: "",
-      joinmlsc: "no",
-      teamName: "vgavsh",
-      members: [], // Empty members array like the filtered result
-      projects: "",
-      motivation: "",
-      agreements: { agree1: true, agree2: true, agree3: true },
-    };
-
-    console.log("Creating registration with data:", testData);
-    const newEntry = new Registration(testData);
-    console.log("Registration document created");
-
-    await newEntry.save();
-    console.log("Registration saved successfully!");
-
-    res.json({
-      success: true,
-      message: "Debug registration successful",
-      id: newEntry._id,
-      dbState: dbState,
-    });
-  } catch (error) {
-    console.error("🚨 DEBUG ENDPOINT ERROR:", error);
-    console.error("🚨 Error name:", error.name);
-    console.error("🚨 Error message:", error.message);
-    if (error.errors) {
-      console.error("🚨 Validation errors:", error.errors);
-    }
-
-    res.status(500).json({
-      success: false,
-      error: error.message,
-      name: error.name,
-      validationErrors: error.errors,
     });
   }
 });

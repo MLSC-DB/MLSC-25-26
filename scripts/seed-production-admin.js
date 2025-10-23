@@ -79,3 +79,4 @@ if (require.main === module) {
 }
 
 module.exports = { createProductionAdmin };
+// $env:ADMIN_PASSWORD="SecureAdminPassword2025!"; node scripts/seed-production-admin.js
