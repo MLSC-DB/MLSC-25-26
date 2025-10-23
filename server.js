@@ -1270,6 +1270,9 @@ app.post("/register", upload.none(), async (req, res) => {
       console.warn("Google Sheets append failed:", e && (e.message || e));
     }
 
+    // TEMP: Disable email sending to isolate the issue
+    console.log("🔍 DEBUG - Skipping email sending for now");
+    /*
     try {
       // build recipients: primary email + member emails
       const recipients = [email];
@@ -1287,6 +1290,7 @@ app.post("/register", upload.none(), async (req, res) => {
         mailErr && (mailErr.message || mailErr)
       );
     }
+    */
 
     // Render thank you (full page)
     return res.render("fragments/thankyou", { name });
