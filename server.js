@@ -1163,8 +1163,7 @@ app.post("/register", upload.none(), async (req, res) => {
         roll: roll || "",
         phone: phone || "",
         discord: discord || "",
-        yearOfStudy:
-          year === "1" ? "First Year" : year === "2" ? "Second Year" : year,
+        yearOfStudy,
         joinmlsc: joinmlsc || "",
         preferences: {
           pref1: pref1 === "" ? "NA" : pref1,
@@ -1178,7 +1177,7 @@ app.post("/register", upload.none(), async (req, res) => {
         roll: m.roll || "",
         phone: m.phone || "",
         discord: m.discord || "",
-        yearOfStudy: m.yearOfStudy || "",
+        yearOfStudy: m.yearOfStudy && (m.yearOfStudy === "First Year" || m.yearOfStudy === "Second Year") ? m.yearOfStudy : undefined,
         joinmlsc: m.joinmlsc || "",
         preferences: {
           pref1:
@@ -1196,18 +1195,11 @@ app.post("/register", upload.none(), async (req, res) => {
         },
       })),
     ];
-    while (allMembers.length < 4) {
-      allMembers.push({
-        name: "",
-        email: "",
-        roll: "",
-        phone: "",
-        discord: "",
-        yearOfStudy: "",
-        joinmlsc: "",
-        preferences: { pref1: "NA", pref2: "NA", pref3: "NA" },
-      });
-    }
+    console.log("🔍 DEBUG - allMembers before filtering:", allMembers.length, allMembers.map(m => ({ name: m.name, hasData: !!(m.name || m.email || m.roll) })));
+    
+    // Filter out completely empty members to avoid schema validation issues
+    const nonEmptyMembers = allMembers.filter(m => !!(m.name || m.email || m.roll));
+    console.log("🔍 DEBUG - nonEmptyMembers after filtering:", nonEmptyMembers.length);
     const yearOfStudy = year === "1" ? "First Year" : year === "2" ? "Second Year" : year;
     console.log("🔍 DEBUG - Transformed year:", { originalYear: year, yearOfStudy });
 
@@ -1223,7 +1215,7 @@ app.post("/register", upload.none(), async (req, res) => {
       domainPreference3: pref3 || "",
       joinmlsc: joinmlsc || "",
       teamName: teamName || "",
-      members: allMembers,
+      members: nonEmptyMembers,
       projects: (projectTitle || "") + (projectLink ? " | " + projectLink : ""),
       motivation: projectIdea || "",
       agreements: { agree1: !!agree1, agree2: !!agree2, agree3: !!agree3 },
