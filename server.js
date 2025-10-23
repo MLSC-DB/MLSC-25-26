@@ -1274,9 +1274,7 @@ app.post("/register", upload.none(), async (req, res) => {
       console.warn("Google Sheets append failed:", e && (e.message || e));
     }
 
-    // TEMP: Disable email sending to isolate the issue
-    console.log("🔍 DEBUG - Skipping email sending for now");
-    /*
+    // Send confirmation email with PDF
     try {
       // build recipients: primary email + member emails
       const recipients = [email];
@@ -1286,15 +1284,18 @@ app.post("/register", upload.none(), async (req, res) => {
         });
       }
 
+      console.log("📧 Sending confirmation email to:", recipients);
       // send confirmation email with attached PDF summary
       await mailer.sendConfirmationEmail(recipients, toSave);
+      console.log("✅ Registration successful with email sent");
     } catch (mailErr) {
+      console.error("📧 Email sending failed:", mailErr);
       console.warn(
         "Failed to send confirmation email:",
         mailErr && (mailErr.message || mailErr)
       );
+      // not fatal, registration was successful
     }
-    */
 
     // Render thank you (full page)
     return res.render("fragments/thankyou", { name });
