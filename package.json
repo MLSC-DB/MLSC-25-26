@@ -8,7 +8,8 @@
     "dev:css": "npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/output.css --watch",
     "build:css": "npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/output.css --minify",
     "test:email": "node -r dotenv/config scripts/test-email.js",
-    "test:mongodb": "node -r dotenv/config scripts/test-mongodb.js"
+    "test:mongodb": "node -r dotenv/config scripts/test-mongodb.js",
+    "seed:admin": "node -r dotenv/config scripts/seed-production-admin.js"
   },
   "keywords": [],
   "author": "",
