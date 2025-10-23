@@ -1336,6 +1336,62 @@ app.post("/register", upload.none(), async (req, res) => {
   }
 });
 
+// DEBUG: Simple registration test endpoint
+app.post("/debug-register", async (req, res) => {
+  try {
+    console.log("🔍 DEBUG ENDPOINT - Testing registration components...");
+    
+    // Test 1: Database connection
+    console.log("Test 1: Database connection");
+    const dbState = mongoose.connection.readyState;
+    console.log("Database state:", dbState); // 1 = connected
+    
+    // Test 2: Create minimal registration
+    console.log("Test 2: Creating minimal registration");
+    const testData = {
+      name: "Debug Test User",
+      email: "debug-test@example.com",
+      roll: "DEBUG001",
+      discord: "debuguser#1234",
+      phone: "1234567890",
+      yearOfStudy: "First Year",
+      joinmlsc: "no",
+      teamName: "Debug Team",
+      members: [], // Empty members array
+      agreements: { agree1: true, agree2: true, agree3: true }
+    };
+    
+    console.log("Creating registration with data:", testData);
+    const newEntry = new Registration(testData);
+    console.log("Registration document created");
+    
+    await newEntry.save();
+    console.log("Registration saved successfully!");
+    
+    res.json({ 
+      success: true, 
+      message: "Debug registration successful",
+      id: newEntry._id,
+      dbState: dbState
+    });
+    
+  } catch (error) {
+    console.error("🚨 DEBUG ENDPOINT ERROR:", error);
+    console.error("🚨 Error name:", error.name);
+    console.error("🚨 Error message:", error.message);
+    if (error.errors) {
+      console.error("🚨 Validation errors:", error.errors);
+    }
+    
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      name: error.name,
+      validationErrors: error.errors
+    });
+  }
+});
+
 // Start server with pre-start checks (verify SMTP in production)
 const PORT = process.env.PORT || 3000;
 
