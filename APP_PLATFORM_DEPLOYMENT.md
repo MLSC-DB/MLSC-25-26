@@ -5,6 +5,7 @@ This guide walks you through deploying the MLSC Registration app to DigitalOcean
 ## Prerequisites
 
 ✅ **Completed Setup:**
+
 - [x] MongoDB Atlas cluster configured and tested
 - [x] Rotated all credentials (Gmail SMTP + Google Service Account)
 - [x] Repository pushed to GitHub with latest changes
@@ -13,10 +14,12 @@ This guide walks you through deploying the MLSC Registration app to DigitalOcean
 ## Step 1: Create App Platform Application
 
 1. **Login to DigitalOcean Console**
+
    - Go to [DigitalOcean Console](https://cloud.digitalocean.com/)
    - Navigate to **Apps** → **Create App**
 
 2. **Connect GitHub Repository**
+
    - Choose **GitHub** as source
    - Select repository: `MLSC-DB/MLSC-25-26`
    - Branch: `main`
@@ -98,15 +101,18 @@ In App Platform settings:
 ## Step 6: Post-Deployment Configuration
 
 ### MongoDB Atlas Network Access
+
 1. Go to MongoDB Atlas → Network Access
 2. Add App Platform's outbound IP addresses
 3. Or use `0.0.0.0/0` (allow all) temporarily for testing
 
 ### Google Sheets Permissions
+
 - Ensure your Google Sheets is shared with your service account email
 - Grant "Editor" permissions
 
 ### Test Registration Flow
+
 1. Visit your app URL
 2. Try registering a team
 3. Check MongoDB Atlas for new registrations
@@ -118,21 +124,25 @@ In App Platform settings:
 ### Common Issues
 
 **Deployment Fails:**
+
 - Check build logs for npm install errors
 - Verify package.json scripts
 - Check Node.js version compatibility
 
 **App Crashes:**
+
 - Check environment variables are set correctly
 - Monitor application logs in App Platform
 - Test database connectivity
 
 **Email Not Working:**
+
 - Verify SMTP credentials
 - Check `/health/email` endpoint
 - Review Gmail security settings
 
 **Google Sheets Integration Fails:**
+
 - Verify service account permissions
 - Check base64 encoding of credentials
 - Ensure sheets ID is correct
@@ -143,7 +153,7 @@ In App Platform settings:
 # Test MongoDB connection
 npm run test:mongodb
 
-# Test email functionality  
+# Test email functionality
 npm run test:email
 
 # Check health endpoints locally
@@ -164,10 +174,12 @@ curl http://localhost:3000/health/email
 ## Cost Estimate
 
 **DigitalOcean App Platform:**
+
 - Basic ($12/month) - 512MB RAM, 1 vCPU
 - Pro ($24/month) - 1GB RAM, 1 vCPU
 
 **MongoDB Atlas:**
+
 - M0 Free Tier - 512MB storage (suitable for development)
 - M2 ($9/month) - 2GB storage (recommended for production)
 
@@ -186,6 +198,7 @@ curl http://localhost:3000/health/email
 ## Security Incident Response
 
 If credentials are ever exposed:
+
 1. **Immediately rotate** all affected credentials
 2. **Update** App Platform environment variables
 3. **Monitor** for unauthorized access

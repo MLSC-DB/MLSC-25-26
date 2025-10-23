@@ -11,6 +11,7 @@ Two helper scripts are provided to securely write Google service account JSON cr
 Writes Google service account JSON to a secure file on Unix-like systems.
 
 **Usage:**
+
 ```bash
 # Set the service account JSON as base64 (recommended)
 export GOOGLE_SERVICE_ACCOUNT_JSON_BASE64="$(base64 -w0 /path/to/service-account.json)"
@@ -26,6 +27,7 @@ export GOOGLE_SERVICE_ACCOUNT_FILE=/opt/mlsc/keys/sheet-key.json
 ```
 
 **Features:**
+
 - Creates target directory if it doesn't exist
 - Sets file permissions to 600 (owner read/write only)
 - Attempts to set ownership to specified user
@@ -36,6 +38,7 @@ export GOOGLE_SERVICE_ACCOUNT_FILE=/opt/mlsc/keys/sheet-key.json
 Writes Google service account JSON to a secure file on Windows systems.
 
 **Usage:**
+
 ```powershell
 # Set the service account JSON as base64 (recommended)
 $json = Get-Content 'C:\path\to\service-account.json' -Raw
@@ -52,6 +55,7 @@ $env:GOOGLE_SERVICE_ACCOUNT_FILE = 'C:\opt\mlsc\keys\sheet-key.json'
 ```
 
 **Features:**
+
 - Creates target directory if it doesn't exist
 - Removes file inheritance and restricts access to specified user
 - Validates JSON format using PowerShell's ConvertFrom-Json
@@ -59,9 +63,11 @@ $env:GOOGLE_SERVICE_ACCOUNT_FILE = 'C:\opt\mlsc\keys\sheet-key.json'
 ## Other Scripts
 
 ### `test-email.js`
+
 CLI tool to test email sending functionality.
 
 **Usage:**
+
 ```bash
 npm run test:email
 # or
