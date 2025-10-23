@@ -1340,41 +1340,45 @@ app.post("/register", upload.none(), async (req, res) => {
 app.post("/debug-register", async (req, res) => {
   try {
     console.log("🔍 DEBUG ENDPOINT - Testing registration components...");
-    
+
     // Test 1: Database connection
     console.log("Test 1: Database connection");
     const dbState = mongoose.connection.readyState;
     console.log("Database state:", dbState); // 1 = connected
-    
+
     // Test 2: Create minimal registration
     console.log("Test 2: Creating minimal registration");
     const testData = {
-      name: "Debug Test User",
-      email: "debug-test@example.com",
-      roll: "DEBUG001",
-      discord: "debuguser#1234",
-      phone: "1234567890",
-      yearOfStudy: "First Year",
+      name: "vasnhaj",  // From your actual form
+      email: "vsahram@gmail.com", // Fixed email 
+      roll: "1024160114",
+      discord: "vsharm",
+      phone: "7973209774",
+      yearOfStudy: "First Year", // Transformed from year: "1"
+      domainPreference1: "", // Empty like form
+      domainPreference2: "",
+      domainPreference3: "",
       joinmlsc: "no",
-      teamName: "Debug Team",
-      members: [], // Empty members array
-      agreements: { agree1: true, agree2: true, agree3: true }
+      teamName: "vgavsh",
+      members: [], // Empty members array like the filtered result
+      projects: "",
+      motivation: "",
+      agreements: { agree1: true, agree2: true, agree3: true },
     };
-    
+
     console.log("Creating registration with data:", testData);
     const newEntry = new Registration(testData);
     console.log("Registration document created");
-    
+
     await newEntry.save();
     console.log("Registration saved successfully!");
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       message: "Debug registration successful",
       id: newEntry._id,
-      dbState: dbState
+      dbState: dbState,
     });
-    
   } catch (error) {
     console.error("🚨 DEBUG ENDPOINT ERROR:", error);
     console.error("🚨 Error name:", error.name);
@@ -1382,12 +1386,12 @@ app.post("/debug-register", async (req, res) => {
     if (error.errors) {
       console.error("🚨 Validation errors:", error.errors);
     }
-    
+
     res.status(500).json({
       success: false,
       error: error.message,
       name: error.name,
-      validationErrors: error.errors
+      validationErrors: error.errors,
     });
   }
 });
