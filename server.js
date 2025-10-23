@@ -331,41 +331,27 @@ async function appendToGoogleSheet(entry) {
     ]
       .filter(Boolean)
       .join(" | ");
-    // Collect all members (primary + up to 3 others, always 4 rows)
-    const members = [
-      {
-        name: entry.name || "",
-        email: entry.email || "",
-        roll: entry.roll || "",
-        phone: entry.phone || "",
-        discord: entry.discord || "",
-        yearOfStudy: entry.yearOfStudy || "",
-        joinmlsc: entry.joinmlsc || "",
-        preferences: {
-          pref1: entry.domainPreference1 || "",
-          pref2: entry.domainPreference2 || "",
-          pref3: entry.domainPreference3 || "",
-        },
-        role: "Primary",
-        index: 1,
+    // Use the members array directly from entry (which already includes the team leader)
+    // The entry.members array already contains all team members including the leader
+    const membersFromEntry = Array.isArray(entry.members) ? entry.members : [];
+    
+    // Map each member and assign roles based on their position
+    const members = membersFromEntry.map((m, i) => ({
+      name: m.name || "",
+      email: m.email || "",
+      roll: m.roll || "",
+      phone: m.phone || "",
+      discord: m.discord || "",
+      yearOfStudy: m.yearOfStudy || "",
+      joinmlsc: m.joinmlsc || "",
+      preferences: {
+        pref1: (m.preferences && m.preferences.pref1) || "",
+        pref2: (m.preferences && m.preferences.pref2) || "",
+        pref3: (m.preferences && m.preferences.pref3) || "",
       },
-      ...(Array.isArray(entry.members) ? entry.members : []).map((m, i) => ({
-        name: m.name || "",
-        email: m.email || "",
-        roll: m.roll || "",
-        phone: m.phone || "",
-        discord: m.discord || "",
-        yearOfStudy: m.yearOfStudy || "",
-        joinmlsc: m.joinmlsc || "",
-        preferences: {
-          pref1: (m.preferences && m.preferences.pref1) || "",
-          pref2: (m.preferences && m.preferences.pref2) || "",
-          pref3: (m.preferences && m.preferences.pref3) || "",
-        },
-        role: `Member ${i + 2}`,
-        index: i + 2,
-      })),
-    ];
+      role: i === 0 ? "Team Leader" : `Member ${i + 1}`,
+      index: i + 1,
+    }));
     // Always output 4 member rows (fill with blanks if needed)
     while (members.length < 4) {
       members.push({
