@@ -48,9 +48,13 @@ npm install
 
 5. Seed admin (one-time, optional)
 
-- The repo contains `seedAdmin.js` for creating an admin. Edit the script or use safer method to set a secure password before running.
+- Use the production admin seeder script with environment variables for security:
 
-  node seedAdmin.js
+  npm run seed:admin
+  
+- Or manually with environment variable:
+
+  ADMIN_PASSWORD=YourSecurePassword node scripts/seed-production-admin.js
 
 6. Google Sheets and email
 
