@@ -8,8 +8,16 @@ mongoose.connect("mongodb://127.0.0.1:27017/mlscRegistrationDB", {
 });
 
 async function createAdmin() {
-  const username = "admin";
-  const plainPassword = "adminpassword";
+  const username = process.env.ADMIN_USERNAME;
+  const plainPassword = process.env.ADMIN_PASSWORD;
+
+  if (!username || !plainPassword) {
+    console.error(
+      "Please provide ADMIN_USERNAME and ADMIN_PASSWORD as environment variables.\n" +
+        "This script should be run interactively for one-time seeding only."
+    );
+    return mongoose.disconnect();
+  }
 
   const existing = await Admin.findOne({ username });
   if (existing) {

@@ -12,6 +12,7 @@ const registrationSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
       match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
     roll: {
@@ -68,5 +69,15 @@ const registrationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Indexes for common queries
+registrationSchema.index({ createdAt: -1 });
+// Text index to support simple search across name, email, roll and teamName
+registrationSchema.index({
+  name: "text",
+  email: "text",
+  roll: "text",
+  teamName: "text",
+});
 
 module.exports = mongoose.model("Registration", registrationSchema);

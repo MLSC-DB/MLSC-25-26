@@ -2,13 +2,45 @@
 const nodemailer = require("nodemailer");
 const PDFDocument = require("pdfkit");
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
+// Create SMTP transporter from env vars. Prefer explicit SMTP_* settings.
+function createTransporter() {
+  if (process.env.SMTP_HOST) {
+    const opts = {
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || "587", 10),
+      secure: process.env.SMTP_SECURE === "true",
+    };
+    if (process.env.SMTP_USER) {
+      opts.auth = { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS };
+    }
+    return nodemailer.createTransport(opts);
+  }
+
+  // Fallback: if MAIL_USER/MAIL_PASS present, use default provider (Gmail via service)
+  if (process.env.MAIL_USER && process.env.MAIL_PASS) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
+    });
+  }
+
+  // No SMTP configured
+  throw new Error(
+    "No mailer configuration found. Set SMTP_HOST/SMTP_USER/SMTP_PASS or MAIL_USER/MAIL_PASS in env."
+  );
+}
+
+let transporter;
+try {
+  transporter = createTransporter();
+} catch (err) {
+  // Defer throwing so the app can still start in non-mailing contexts; functions will fail at send time.
+  console.warn(
+    "Mailer not configured:",
+    err && err.message ? err.message : err
+  );
+  transporter = null;
+}
 
 function buildRegistrationPdfBuffer(reg) {
   return new Promise((resolve, reject) => {
@@ -97,8 +129,14 @@ async function sendConfirmationEmail(recipients, registration) {
 
       const html = `<p>${greeting}</p><p>${memberNote}</p><p>Join our Discord: <a href="${discordInvite}">${discordInvite}</a></p><p>Best,<br/>MLSC Team</p>`;
 
+      const from =
+        process.env.MAIL_FROM ||
+        process.env.SMTP_USER ||
+        process.env.MAIL_USER ||
+        `no-reply@${process.env.DOMAIN || "example.com"}`;
+
       const mailOptions = {
-        from: process.env.MAIL_USER,
+        from,
         to,
         subject,
         html,
@@ -114,6 +152,7 @@ async function sendConfirmationEmail(recipients, registration) {
         ],
       };
 
+      if (!transporter) throw new Error("Transporter not configured");
       await transporter.sendMail(mailOptions);
     } catch (err) {
       console.error(
@@ -124,4 +163,10 @@ async function sendConfirmationEmail(recipients, registration) {
   }
 }
 
-module.exports = { sendConfirmationEmail };
+async function verifyTransporter() {
+  if (!transporter) throw new Error("Transporter not configured");
+  // nodemailer.transporter.verify returns a Promise when callback omitted
+  return transporter.verify();
+}
+
+module.exports = { sendConfirmationEmail, verifyTransporter };

@@ -7,12 +7,59 @@ const mongoose = require("mongoose");
 const Registration = require("./server/src/models/Registration");
 const rateLimit = require("express-rate-limit");
 const session = require("express-session");
+const Helmet = require("helmet");
+const MongoStore = require("connect-mongo");
 const bcrypt = require("bcrypt");
 const { error } = require("console");
 const Admin = require("./server/src/models/Admin");
 const { Parser } = require("json2csv");
 require("dotenv").config();
-const { sendConfirmationEmail } = require("./server/src/utils/mailer");
+const mailer = require("./server/src/utils/mailer");
+const logger = require("./server/src/utils/logger");
+const pinoHttp = require("pino-http");
+
+// Startup validation: in production we warn about missing recommended env vars
+// but do not abort startup. This keeps the app resilient while still surfacing
+// configuration issues via logs.
+const isProd = (process.env.NODE_ENV || "").toLowerCase() === "production";
+if (isProd) {
+  const missing = [];
+  if (!process.env.MONGODB_URI) missing.push("MONGODB_URI (recommended)");
+
+  // SESSION_SECRET is critical: abort startup if missing in production
+  if (!process.env.SESSION_SECRET) {
+    console.error(
+      "SESSION_SECRET is required in production. Set SESSION_SECRET environment variable."
+    );
+    process.exit(1);
+  }
+
+  // SMTP is recommended for transactional emails (warn if missing)
+  const smtpMissing = [];
+  if (!process.env.SMTP_HOST) smtpMissing.push("SMTP_HOST");
+  if (!process.env.SMTP_USER) smtpMissing.push("SMTP_USER");
+  if (!process.env.SMTP_PASS) smtpMissing.push("SMTP_PASS");
+  if (!process.env.MAIL_FROM) smtpMissing.push("MAIL_FROM");
+  if (smtpMissing.length) {
+    console.warn(
+      "Missing SMTP-related environment variables (recommended):",
+      smtpMissing.join(", ")
+    );
+  }
+
+  // Google Sheets: sheet ID and credentials are optional; warn if absent
+  if (!process.env.GOOGLE_SHEET_ID)
+    console.warn("GOOGLE_SHEET_ID not set (Google Sheets optional)");
+  const hasGoogleCreds = !!(
+    process.env.GOOGLE_SERVICE_ACCOUNT_JSON ||
+    process.env.GOOGLE_SERVICE_ACCOUNT_FILE ||
+    process.env.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64
+  );
+  if (!hasGoogleCreds)
+    console.warn(
+      "Google service account credentials not provided (set GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SERVICE_ACCOUNT_FILE or GOOGLE_SERVICE_ACCOUNT_JSON_BASE64)"
+    );
+}
 
 // Helper: append a registration entry to Google Sheets (uses service account)
 // Configure via environment variables:
@@ -414,13 +461,69 @@ async function ensureSheetHeaderSafe(sheets, spreadsheetId, sheetRange) {
 }
 // (merge conflicts or other formatting issues), fall back to a single-row
 
-app.use(
-  session({
-    secret: "supersecretkey", // change this
-    resave: false,
-    saveUninitialized: true,
-  })
-);
+const SESSION_SECRET = process.env.SESSION_SECRET || "change_me_in_production";
+const SESSION_COOKIE_SECURE = process.env.SESSION_COOKIE_SECURE === "true";
+
+// Trust proxy when running behind a reverse proxy (set via env var in production)
+if (process.env.TRUST_PROXY === "1" || process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
+// Use Helmet with stricter production defaults (CSP + HSTS)
+// Content-Security-Policy is enabled in production; in dev we disable CSP to avoid blocking dev workflows.
+const helmetOptions = {
+  contentSecurityPolicy: isProd
+    ? {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "https:"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+          imgSrc: ["'self'", "data:", "https:"],
+          fontSrc: ["'self'", "https:"],
+          connectSrc: ["'self'", "https:"],
+          frameAncestors: ["'none'"],
+          baseUri: ["'self'"],
+          formAction: ["'self'"],
+        },
+      }
+    : false,
+};
+
+app.use(Helmet(helmetOptions));
+// Additional hardening in production: HSTS
+if (isProd) {
+  try {
+    app.use(
+      Helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true })
+    );
+  } catch (e) {
+    console.warn("HSTS configuration skipped:", e && (e.message || e));
+  }
+}
+
+app.use(pinoHttp({ logger }));
+
+// Configure session store: use MongoStore in production or when MONGODB_URI is present
+const sessionOptions = {
+  secret: SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: SESSION_COOKIE_SECURE, // set to true when using HTTPS in production
+    httpOnly: true,
+    sameSite: "lax",
+  },
+};
+
+if (process.env.MONGODB_URI) {
+  sessionOptions.store = MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    ttl: parseInt(process.env.SESSION_TTL || "14", 10) * 24 * 60 * 60, // default 14 days
+    crypto: { secret: SESSION_SECRET },
+  });
+}
+
+app.use(session(sessionOptions));
 
 function requireAdminAuth(req, res, next) {
   if (req.session && req.session.isAdmin) {
@@ -437,10 +540,13 @@ function isAdmin(req, res, next) {
   return res.redirect("/admin/login");
 }
 
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mlscRegistrationDB";
+
 mongoose
-  .connect("mongodb://127.0.0.1:27017/mlscRegistrationDB", {})
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .connect(MONGODB_URI, {})
+  .then(() => logger.info("Connected to MongoDB"))
+  .catch((err) => logger.error({ err }, "MongoDB connection error"));
 
 const registerLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
@@ -455,6 +561,13 @@ const registerLimiter = rateLimit({
   },
 });
 
+// Admin login rate limiter (prevent brute-force)
+const adminLoginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // max 10 attempts per 15 minutes per IP
+  message: "Too many admin login attempts. Try again later.",
+});
+
 // Set view engine and views directory
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -467,6 +580,84 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Routes
+// Lightweight health check for load-balancers
+app.get("/healthz", (req, res) => res.status(200).send("ok"));
+
+// Readiness probe: ensure MongoDB is connected
+app.get("/readyz", async (req, res) => {
+  try {
+    const state = mongoose.connection.readyState; // 1 = connected
+    if (state === 1) return res.status(200).json({ ready: true });
+    return res.status(500).json({ ready: false, state });
+  } catch (e) {
+    return res.status(500).json({ ready: false, error: e && e.message });
+  }
+});
+
+// Non-blocking health check for email transport. Useful for uptime probes.
+app.get("/health/email", async (req, res) => {
+  // If mailer doesn't expose verifyTransporter, treat as healthy (non-blocking)
+  if (!mailer || typeof mailer.verifyTransporter !== "function") {
+    const smtpInfo = {
+      host: process.env.SMTP_HOST || null,
+      user: maskSensitive(
+        process.env.SMTP_USER || process.env.MAIL_USER || null
+      ),
+    };
+    return res
+      .status(200)
+      .json({ ok: true, note: "no-mailer-verifier", smtp: smtpInfo });
+  }
+
+  // Run transporter.verify() with a short timeout to avoid blocking
+  const verifyPromise = mailer.verifyTransporter();
+  const timeoutMs = parseInt(process.env.EMAIL_HEALTH_TIMEOUT_MS || "3000", 10);
+
+  const timeout = new Promise((_, rej) =>
+    setTimeout(() => rej(new Error("verify-timeout")), timeoutMs)
+  );
+
+  try {
+    await Promise.race([verifyPromise, timeout]);
+    return res.status(200).json({
+      ok: true,
+      smtp: {
+        host: process.env.SMTP_HOST || null,
+        user: maskSensitive(
+          process.env.SMTP_USER || process.env.MAIL_USER || null
+        ),
+      },
+    });
+  } catch (err) {
+    return res.status(503).json({
+      ok: false,
+      error: err && err.message,
+      smtp: {
+        host: process.env.SMTP_HOST || null,
+        user: maskSensitive(
+          process.env.SMTP_USER || process.env.MAIL_USER || null
+        ),
+      },
+    });
+  }
+});
+
+// Mask sensitive strings for display (e.g., email usernames). Keep domain but obfuscate local-part.
+function maskSensitive(s) {
+  if (!s) return null;
+  try {
+    if (s.includes("@")) {
+      const [local, domain] = s.split("@");
+      if (local.length <= 1) return `*@@${domain}`;
+      return `${local[0]}***@${domain}`;
+    }
+    if (s.length <= 4) return "****";
+    return `${s.slice(0, 3)}***`;
+  } catch (e) {
+    return null;
+  }
+}
+
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -482,7 +673,7 @@ app.get("/fragments/register", (req, res) => {
 // Full standalone register page
 app.get("/register", (req, res) => {
   // render the full-page register view we created
-  res.render("register");
+  res.render("register", { discordInvite: process.env.DISCORD_INVITE || "" });
 });
 
 app.get("/fragments/about", (req, res) => {
@@ -671,7 +862,7 @@ app.get("/admin/login", (req, res) => {
   res.render("admin/login", { error });
 });
 
-app.post("/admin/login", async (req, res) => {
+app.post("/admin/login", adminLoginLimiter, async (req, res) => {
   // Accept either email or username from the form (some pages use `username` input)
   const { email, username, password } = req.body || {};
   const identifier = (email || username || "").toString().trim();
@@ -689,6 +880,7 @@ app.post("/admin/login", async (req, res) => {
     });
 
     if (!admin) {
+      logger.warn({ identifier }, "Admin login failed: user not found");
       return res
         .status(401)
         .render("admin/login", { error: "Invalid credentials." });
@@ -696,6 +888,10 @@ app.post("/admin/login", async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
+      logger.warn(
+        { adminId: admin._id, identifier },
+        "Admin login failed: wrong password"
+      );
       return res
         .status(401)
         .render("admin/login", { error: "Invalid credentials." });
@@ -1045,9 +1241,12 @@ app.post("/register", upload.none(), async (req, res) => {
       }
 
       // send confirmation email with attached PDF summary
-      await sendConfirmationEmail(recipients, toSave);
+      await mailer.sendConfirmationEmail(recipients, toSave);
     } catch (mailErr) {
-      console.warn("Failed to send confirmation email:", mailErr);
+      console.warn(
+        "Failed to send confirmation email:",
+        mailErr && (mailErr.message || mailErr)
+      );
     }
 
     // Render thank you (full page)
@@ -1094,8 +1293,38 @@ app.post("/register", upload.none(), async (req, res) => {
   }
 });
 
-// Start server
+// Start server with pre-start checks (verify SMTP in production)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`)
-);
+
+async function start() {
+  if (isProd) {
+    // Try to verify transporter but don't abort startup on failure. Mail sending
+    // is best-effort; failing verification should not bring down the entire app.
+    (async () => {
+      try {
+        if (typeof mailer.verifyTransporter === "function") {
+          await mailer.verifyTransporter();
+          console.log("SMTP transporter verified");
+        } else {
+          console.warn(
+            "Mailer verifyTransporter not available; skipping SMTP verification"
+          );
+        }
+      } catch (err) {
+        console.warn(
+          "SMTP verification failed (continuing startup):",
+          err && (err.message || err)
+        );
+      }
+    })();
+  }
+
+  app.listen(PORT, () =>
+    console.log(`Server running on http://localhost:${PORT}`)
+  );
+}
+
+start().catch((err) => {
+  console.error("Failed to start server:", err && (err.message || err));
+  process.exit(1);
+});

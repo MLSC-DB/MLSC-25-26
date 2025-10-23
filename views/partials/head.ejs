@@ -3,6 +3,9 @@
 <title>MLSC DB</title>
 
 <!-- Tailwind + Style -->
+<!-- Prefer a pre-built Tailwind output in production if present -->
+<link rel="stylesheet" href="/css/output.css" />
+<!-- CDN fallback for development or if output.css is missing -->
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -10,8 +13,12 @@
 <!-- Preloader Style & Base Styles -->
 <style>
   @keyframes move-xp {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(600%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(600%);
+    }
   }
 
   .loader-track {
@@ -19,14 +26,16 @@
   }
 
   .bar-rect {
-    width: 16px; height: 100%;
+    width: 16px;
+    height: 100%;
     background-color: skyblue;
     margin-right: 2px;
   }
 
   .xp-btn {
     font-family: Tahoma, sans-serif;
-    font-size: 12px; font-weight: bold;
+    font-size: 12px;
+    font-weight: bold;
     padding: 2px 8px;
     color: black;
     background: linear-gradient(to bottom, #dbeeff, #7fbfff);
