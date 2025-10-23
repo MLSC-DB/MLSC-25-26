@@ -5,6 +5,10 @@ build/
 logs
 *.log
 
+# IDE/Editor settings (keep local)
+.vscode/
+.idea/
+
 # Sensitive files
 service-account.json
 *.pem
