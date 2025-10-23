@@ -953,6 +953,8 @@ app.get("/admin/test-sheet", isAdmin, async (req, res) => {
 
 app.post("/register", upload.none(), async (req, res) => {
   const body = req.body || {};
+  
+  console.log("🔍 RAW FORM DATA:", JSON.stringify(body, null, 2));
 
   // Basic personal required fields
   const name = (body.name || "").toString().trim();
