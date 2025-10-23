@@ -476,7 +476,12 @@ const helmetOptions = {
     ? {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com", "https:"],
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            "https://cdn.tailwindcss.com",
+            "https:",
+          ],
           styleSrc: ["'self'", "'unsafe-inline'", "https:"],
           imgSrc: ["'self'", "data:", "https:"],
           fontSrc: ["'self'", "https:"],
@@ -1144,6 +1149,12 @@ app.post("/register", upload.none(), async (req, res) => {
   }
 
   try {
+    // DEBUG: Log the incoming data
+    console.log("🔍 DEBUG - Registration data:", {
+      name, email, roll, discord, phone, year, joinmlsc, teamName,
+      agree1, agree2, agree3
+    });
+
     // Always store 4 member objects per team, blank fields except preferences as 'NA' if blank
     const allMembers = [
       {
@@ -1197,14 +1208,16 @@ app.post("/register", upload.none(), async (req, res) => {
         preferences: { pref1: "NA", pref2: "NA", pref3: "NA" },
       });
     }
+    const yearOfStudy = year === "1" ? "First Year" : year === "2" ? "Second Year" : year;
+    console.log("🔍 DEBUG - Transformed year:", { originalYear: year, yearOfStudy });
+
     const toSave = {
       name,
       email,
       roll,
       discord,
       phone,
-      yearOfStudy:
-        year === "1" ? "First Year" : year === "2" ? "Second Year" : year,
+      yearOfStudy,
       domainPreference1: pref1 || "",
       domainPreference2: pref2 || "",
       domainPreference3: pref3 || "",
@@ -1216,8 +1229,13 @@ app.post("/register", upload.none(), async (req, res) => {
       agreements: { agree1: !!agree1, agree2: !!agree2, agree3: !!agree3 },
     };
 
+    console.log("🔍 DEBUG - Data to save:", JSON.stringify(toSave, null, 2));
+    
     const newEntry = new Registration(toSave);
+    console.log("🔍 DEBUG - Created registration document");
+    
     await newEntry.save();
+    console.log("🔍 DEBUG - Successfully saved to database");
 
     // Best-effort: append to Google Sheets (won't block the response on failure)
     try {
