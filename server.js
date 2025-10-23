@@ -1302,6 +1302,16 @@ app.post("/register", upload.none(), async (req, res) => {
     if (err.errors) {
       console.error("🚨 Validation errors:", err.errors);
     }
+    
+    // Store last error for debugging
+    global.lastRegistrationError = {
+      message: err && (err.message || err),
+      code: err && err.code,
+      stack: err && err.stack,
+      errors: err && err.errors,
+      timestamp: new Date().toISOString(),
+      dbState: mongoose.connection.readyState
+    };
     // detect duplicate key (usually email unique index)
     let userMessage = "An error occurred. Try again later.";
     let statusCode = 500;
@@ -1340,6 +1350,15 @@ app.post("/register", upload.none(), async (req, res) => {
       message: userMessage,
     });
   }
+});
+
+// Debug endpoint to see last registration error
+app.get("/debug-error", (req, res) => {
+  res.json({
+    lastError: global.lastRegistrationError || null,
+    dbState: mongoose.connection.readyState,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // DEBUG: Simple registration test endpoint
