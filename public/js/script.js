@@ -360,7 +360,30 @@ function loadPopupContent(url, title) {
         "</div>";
       requestAnimationFrame(() => {
         const inner = popupContent.firstElementChild;
-        if (inner) inner.classList.remove("opacity-0");
+        if (!inner) return;
+        const imgs = inner.querySelectorAll("img");
+        if (imgs.length) {
+          let loaded = 0,
+            total = imgs.length;
+          const done = () => inner.classList.remove("opacity-0");
+          imgs.forEach((img) => {
+            if (img.complete) {
+              if (++loaded === total) done();
+            } else {
+              const onEnd = () => {
+                img.removeEventListener("load", onEnd);
+                img.removeEventListener("error", onEnd);
+                if (++loaded === total) done();
+              };
+              img.addEventListener("load", onEnd);
+              img.addEventListener("error", onEnd);
+            }
+          });
+          // safety timeout in case events don’t fire
+          setTimeout(done, 4000);
+        } else {
+          inner.classList.remove("opacity-0");
+        }
       });
       popup.classList.remove("popup-loading");
     })
@@ -569,7 +592,29 @@ function createAppWindow(id, title, url) {
         "</div>";
       requestAnimationFrame(() => {
         const inner = content.firstElementChild;
-        if (inner) inner.classList.remove("opacity-0");
+        if (!inner) return;
+        const imgs = inner.querySelectorAll("img");
+        if (imgs.length) {
+          let loaded = 0,
+            total = imgs.length;
+          const done = () => inner.classList.remove("opacity-0");
+          imgs.forEach((img) => {
+            if (img.complete) {
+              if (++loaded === total) done();
+            } else {
+              const onEnd = () => {
+                img.removeEventListener("load", onEnd);
+                img.removeEventListener("error", onEnd);
+                if (++loaded === total) done();
+              };
+              img.addEventListener("load", onEnd);
+              img.addEventListener("error", onEnd);
+            }
+          });
+          setTimeout(done, 4000);
+        } else {
+          inner.classList.remove("opacity-0");
+        }
       });
       popup.classList.remove("popup-loading");
       attachRegisterFormHandler(content);
@@ -595,7 +640,29 @@ function createAppWindow(id, title, url) {
                 "</div>";
               requestAnimationFrame(() => {
                 const inner = content.firstElementChild;
-                if (inner) inner.classList.remove("opacity-0");
+                if (!inner) return;
+                const imgs = inner.querySelectorAll("img");
+                if (imgs.length) {
+                  let loaded = 0,
+                    total = imgs.length;
+                  const done = () => inner.classList.remove("opacity-0");
+                  imgs.forEach((img) => {
+                    if (img.complete) {
+                      if (++loaded === total) done();
+                    } else {
+                      const onEnd = () => {
+                        img.removeEventListener("load", onEnd);
+                        img.removeEventListener("error", onEnd);
+                        if (++loaded === total) done();
+                      };
+                      img.addEventListener("load", onEnd);
+                      img.addEventListener("error", onEnd);
+                    }
+                  });
+                  setTimeout(done, 4000);
+                } else {
+                  inner.classList.remove("opacity-0");
+                }
               });
               popup.classList.remove("popup-loading");
               attachRegisterFormHandler(content);
