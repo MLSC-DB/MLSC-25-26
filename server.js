@@ -926,8 +926,7 @@ app.post("/register", upload.none(), async (req, res) => {
   const email = (body.email || "").toString().trim();
   const roll = (body.roll || "").toString().trim();
   const discord = (body.discord || "").toString().trim();
-  const phoneRaw = (body.phone || "").toString();
-  const phone = phoneRaw.replace(/\D/g, "");
+  const phone = (body.phone || "").toString();
   const year = (body.year || body.yearOfStudy || "").toString();
   const joinmlsc = (body.mlsc_member_1 || body.joinmlsc || "").toString();
 
@@ -969,8 +968,8 @@ app.post("/register", upload.none(), async (req, res) => {
     errors.push("Discord username is required.");
     formErrors.discord = true;
   }
-  if (!phone || phone.length < 8) {
-    errors.push("Phone number is required (at least 8 digits).");
+  if (!phone) {
+    errors.push("Phone number is required.");
     formErrors.phone = true;
   }
   if (!year) {
@@ -997,9 +996,7 @@ app.post("/register", upload.none(), async (req, res) => {
     const memail = (body[`member${i}_email`] || "").toString().trim();
     const mroll = (body[`member${i}_roll`] || "").toString().trim();
     const mdiscord = (body[`member${i}_discord`] || "").toString().trim();
-    const mphone = (body[`member${i}_phone`] || "")
-      .toString()
-      .replace(/\D/g, "");
+    const mphone = (body[`member${i}_phone`] || "").toString();
     const myear = (body[`member${i}_year`] || "").toString();
     const mjoin = (body[`mlsc_member_${i}`] || "").toString();
     const mpref1 = (body[`member${i}_pref1`] || "").toString();
@@ -1039,8 +1036,8 @@ app.post("/register", upload.none(), async (req, res) => {
       errors.push(`Member ${i}: discord is required.`);
       formErrors[`member${i}_discord`] = true;
     }
-    if (!mphone || mphone.length < 8) {
-      errors.push(`Member ${i}: phone is required (min 8 digits).`);
+    if (!mphone) {
+      errors.push(`Member ${i}: phone is required.`);
       formErrors[`member${i}_phone`] = true;
     }
     if (!myear) {

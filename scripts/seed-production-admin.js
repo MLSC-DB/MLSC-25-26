@@ -25,7 +25,7 @@ async function createProductionAdmin() {
     await mongoose.connect(mongoUri);
     console.log("✅ Connected to MongoDB Atlas");
 
-    const username = process.env.ADMIN_USERNAME || "admin";
+    const username = process.env.ADMIN_USERNAME || "mlscadmin";
     const plainPassword = process.env.ADMIN_PASSWORD;
 
     if (!plainPassword) {
@@ -79,4 +79,4 @@ if (require.main === module) {
 }
 
 module.exports = { createProductionAdmin };
-// $env:ADMIN_PASSWORD="SecureAdminPassword2025!"; node scripts/seed-production-admin.js
+// $env:ADMIN_PASSWORD="admin123"; node scripts/seed-production-admin.js

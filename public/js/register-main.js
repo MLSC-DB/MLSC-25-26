@@ -335,10 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const roll = form.querySelector("#roll").value.trim();
     const discord = (form.querySelector("#discord")?.value || "").trim();
     const year = form.querySelector("#year").value;
-    const phone = (form.querySelector("#phone")?.value || "").replace(
-      /\D/g,
-      ""
-    );
+    const phone = form.querySelector("#phone")?.value || "";
     const joinmlsc =
       document.querySelector('input[name="mlsc_member_1"]:checked')?.value ||
       "";
@@ -350,8 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!roll) errors.push("Roll number is required");
     if (!discord) errors.push("Discord username is required");
     if (!year) errors.push("Year is required");
-    if (!phone || phone.length < 8)
-      errors.push("Phone number is required (min 8 digits)");
+    if (!phone) errors.push("Phone number is required");
 
     const pref1 = document.getElementById("pref1")?.value || "";
     if ((joinmlsc === "yes" || joinmlsc === "not-sure") && !pref1)
@@ -374,9 +370,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const mroll = form.querySelector(`[name="member${i}_roll"]`)?.value || "";
       const mdiscord =
         form.querySelector(`[name="member${i}_discord"]`)?.value || "";
-      const mphone = (
-        form.querySelector(`[name="member${i}_phone"]`)?.value || ""
-      ).replace(/\D/g, "");
+      const mphone =
+        form.querySelector(`[name="member${i}_phone"]`)?.value || "";
       const myear = form.querySelector(`[name="member${i}_year"]`)?.value || "";
       const mmlsc =
         document.querySelector(`input[name="mlsc_member_${i}"]:checked`)
@@ -405,8 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
         errors.push(`Member ${i}: valid email required`);
       if (!mroll) errors.push(`Member ${i}: roll number is required`);
       if (!mdiscord) errors.push(`Member ${i}: discord is required`);
-      if (!mphone || mphone.length < 8)
-        errors.push(`Member ${i}: phone is required (min 8 digits)`);
+      if (!mphone) errors.push(`Member ${i}: phone is required`);
       if (!myear) errors.push(`Member ${i}: year is required`);
       if (!mmlsc)
         errors.push(
@@ -436,10 +430,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const fd = new FormData();
     fd.append("name", payload.name || "");
     fd.append("email", payload.email || "");
-    // sanitize phone: keep digits only
+    // keep phone as entered (no format/sanitization)
     const rawPhone = (payload.phone || "").toString();
-    const phoneDigits = rawPhone.replace(/\D/g, "");
-    fd.append("phone", phoneDigits);
+    fd.append("phone", rawPhone);
     // map year to backend enum
     const yearMap = { 1: "First Year", 2: "Second Year" };
     fd.append(
@@ -500,6 +493,9 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     } catch (e) {}
 
+    // Indicate submitting state (disable buttons, show spinner)
+    setSubmitting(true);
+
     // POST to backend
     fetch("/register", {
       method: "POST",
@@ -511,10 +507,13 @@ document.addEventListener("DOMContentLoaded", () => {
     })
       .then((res) => {
         if (res.ok) {
-          // Success: clear draft and show confirmation modal
+          // Success: clear saved data and reset the form, then show confirmation modal
           try {
             localStorage.removeItem("mlsc_registration_draft");
+            localStorage.removeItem("mlsc_registration_preview");
           } catch (e) {}
+          // Reset UI state and fields silently
+          clearForm(true);
           if (confirmModal) {
             openModal();
           } else {
@@ -579,6 +578,10 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast(
           "Network error while submitting. Please check your connection and try again."
         );
+      })
+      .finally(() => {
+        // Always restore submitting state unless we already reset inside OK path
+        setSubmitting(false);
       });
   }
 
@@ -675,7 +678,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Clear form handler: reset form and clear saved draft/preview
-  function clearForm() {
+  function clearForm(silent = false) {
     try {
       // reset the form fields
       form.reset();
@@ -704,7 +707,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .forEach((c) => enforcePrefUniquenessFor(c));
       enforcePrefUniquenessFor(document.getElementById("preferencesSection"));
 
-      showToast("Form cleared", { timeout: 2200 });
+      if (!silent) showToast("Form cleared", { timeout: 2200 });
     } catch (e) {
       console.warn("clearForm failed", e);
       showToast("Failed to clear form", { timeout: 2200 });
@@ -756,6 +759,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // close modal
     closeModalBtn?.addEventListener("click", () => {
       closeModal();
+    });
+    // close when clicking overlay (outside dialog content)
+    confirmModal?.addEventListener("click", (e) => {
+      if (e.target === confirmModal) closeModal();
     });
     // Autofill detection: listen for animationstart fired by :-webkit-autofill
     document.addEventListener(
@@ -822,6 +829,55 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") confirmModal.classList.add("hidden");
     });
+  }
+
+  // Visual loading state for submit
+  function setSubmitting(isSubmitting) {
+    try {
+      const submitBtn = form?.querySelector('button[type="submit"]');
+      const clearBtn = document.getElementById("clearFormBtn");
+      if (!submitBtn) return;
+
+      if (isSubmitting) {
+        if (!submitBtn.dataset.originalHtml) {
+          submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+        }
+        submitBtn.disabled = true;
+        submitBtn.setAttribute("aria-busy", "true");
+        submitBtn.style.opacity = "0.9";
+        submitBtn.style.cursor = "not-allowed";
+        // simple inline spinner + label
+        submitBtn.innerHTML =
+          '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 inline-block text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">' +
+          '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>' +
+          '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>' +
+          "</svg>" +
+          "<span>Submitting…</span>";
+
+        if (clearBtn) {
+          clearBtn.disabled = true;
+          clearBtn.style.opacity = "0.6";
+          clearBtn.style.cursor = "not-allowed";
+        }
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute("aria-busy");
+        submitBtn.style.opacity = "";
+        submitBtn.style.cursor = "";
+        if (submitBtn.dataset.originalHtml) {
+          submitBtn.innerHTML = submitBtn.dataset.originalHtml;
+        } else {
+          submitBtn.textContent = "Submit Registration";
+        }
+        if (clearBtn) {
+          clearBtn.disabled = false;
+          clearBtn.style.opacity = "";
+          clearBtn.style.cursor = "";
+        }
+      }
+    } catch (e) {
+      /* ignore */
+    }
   }
 
   // wire autosave for all inputs on change/input

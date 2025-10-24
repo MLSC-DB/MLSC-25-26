@@ -223,12 +223,16 @@ document.addEventListener("click", function (e) {
 
   if (about) {
     e.preventDefault();
-    try { createAppWindow("win-about", "About MLSC", "fragments/about"); } catch (_) {}
+    try {
+      createAppWindow("win-about", "About MLSC", "fragments/about");
+    } catch (_) {}
     closeMenu();
   }
   if (team) {
     e.preventDefault();
-    try { createAppWindow("win-team", "Meet the Team", "fragments/team"); } catch (_) {}
+    try {
+      createAppWindow("win-team", "Meet the Team", "fragments/team");
+    } catch (_) {}
     closeMenu();
   }
   if (registerNow) {
