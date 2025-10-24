@@ -109,3 +109,36 @@
     overflow-x: hidden;
   }
 </style>
+
+<!-- Minimal CSS fallback if Tailwind fails to load (debug safety net) -->
+<script>
+  (function(){
+    function addFallbackCSS(){
+      var css = [
+        '.flex{display:flex}',
+        '.justify-between{justify-content:space-between}',
+        '.items-center{align-items:center}',
+        '.px-1{padding-left:.25rem;padding-right:.25rem}',
+        '.py-1{padding-top:.25rem;padding-bottom:.25rem}',
+        '.px-4{padding-left:1rem;padding-right:1rem}',
+        '.text-sm{font-size:.875rem;line-height:1.25rem}',
+        '.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,\'Liberation Mono\',\'Courier New\',monospace}',
+        '.container{width:100%;max-width:1024px;margin-left:auto;margin-right:auto}',
+        '.bg-slate-100{background-color:#f1f5f9}',
+        '.bg-black{background-color:#000}'
+      ].join('');
+      var style = document.createElement('style');
+      style.setAttribute('data-fallback','tailwind-min');
+      style.textContent = css;
+      document.head.appendChild(style);
+      console.warn('Tailwind CDN seems unavailable; applied minimal CSS fallback.');
+    }
+    function check(){
+      try{ if (typeof window.__checkTailwind === 'function') { if (!window.__checkTailwind()) addFallbackCSS(); } }
+      catch(e){ /* ignore */ }
+    }
+    // Run ASAP
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', check);
+    else check();
+  })();
+  </script>
