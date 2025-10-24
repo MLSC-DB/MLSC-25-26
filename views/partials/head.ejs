@@ -84,6 +84,25 @@
       // Misc content placeholders
       "text-center",
       "mt-16",
+
+      // Skeleton loader utilities and fades
+      "grid",
+      "grid-cols-3",
+      "gap-3",
+      "space-y-2",
+      "space-y-4",
+      "p-4",
+      "sm:p-6",
+      "h-4",
+      "h-16",
+      "w-2/3",
+      "w-3/4",
+      "rounded",
+      "rounded-md",
+      "transition-opacity",
+      "duration-200",
+      "duration-300",
+      "opacity-0",
     ],
   };
 </script>
@@ -174,6 +193,67 @@
   body {
     max-height: 100vh;
     overflow-x: hidden;
+  }
+
+  /* Skeleton shimmer for popup content while loading */
+  @keyframes skeleton-shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: skeleton-shimmer 1.4s infinite;
+  }
+
+  /* Thin indeterminate bar under the window header while loading */
+  @keyframes header-indeterminate {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  .popup-loading .header {
+    position: relative;
+  }
+  .popup-loading .header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      #93c5fd,
+      #60a5fa,
+      #93c5fd,
+      transparent
+    );
+    background-size: 200% 100%;
+    animation: header-indeterminate 1.2s linear infinite;
+    opacity: 0.9;
   }
 </style>
 

@@ -826,6 +826,17 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       clearForm();
     });
+    // back button: go back if possible, else go home
+    const backBtn = document.getElementById("backBtn");
+    backBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      try {
+        if (window.history && window.history.length > 1) window.history.back();
+        else window.location.href = "/";
+      } catch (err) {
+        window.location.href = "/";
+      }
+    });
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") confirmModal.classList.add("hidden");
     });
@@ -836,6 +847,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const submitBtn = form?.querySelector('button[type="submit"]');
       const clearBtn = document.getElementById("clearFormBtn");
+      const backBtn = document.getElementById("backBtn");
       if (!submitBtn) return;
 
       if (isSubmitting) {
@@ -859,6 +871,11 @@ document.addEventListener("DOMContentLoaded", () => {
           clearBtn.style.opacity = "0.6";
           clearBtn.style.cursor = "not-allowed";
         }
+        if (backBtn) {
+          backBtn.disabled = true;
+          backBtn.style.opacity = "0.6";
+          backBtn.style.cursor = "not-allowed";
+        }
       } else {
         submitBtn.disabled = false;
         submitBtn.removeAttribute("aria-busy");
@@ -873,6 +890,11 @@ document.addEventListener("DOMContentLoaded", () => {
           clearBtn.disabled = false;
           clearBtn.style.opacity = "";
           clearBtn.style.cursor = "";
+        }
+        if (backBtn) {
+          backBtn.disabled = false;
+          backBtn.style.opacity = "";
+          backBtn.style.cursor = "";
         }
       }
     } catch (e) {

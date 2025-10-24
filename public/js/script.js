@@ -295,8 +295,8 @@ function loadPopupContent(url, title) {
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
   const popupTitle = document.getElementById("popup-title");
-  popupContent.innerHTML =
-    '<div class="text-center my-8 text-white">Loading...</div>';
+  popup.classList.add("popup-loading");
+  popupContent.innerHTML = getSkeletonHTML();
   popup.classList.remove("hidden", "opacity-0", "scale-0");
   setTimeout(() => {
     popup.classList.add("opacity-100", "scale-100");
@@ -349,11 +349,25 @@ function loadPopupContent(url, title) {
   fetch(url)
     .then((res) => res.text())
     .then((html) => {
-      popupContent.innerHTML = html;
+      popupContent.innerHTML =
+        '<div class="transition-opacity duration-200 opacity-0">' +
+        html +
+        "</div>";
+      requestAnimationFrame(() => {
+        const inner = popupContent.firstElementChild;
+        if (inner) inner.classList.remove("opacity-0");
+      });
+      popup.classList.remove("popup-loading");
     })
     .catch(() => {
-      popupContent.innerHTML =
-        '<div class="text-red-500 p-4">Failed to load content.</div>';
+      popupContent.innerHTML = `
+        <div class="p-4 text-center">
+          <div class="text-red-400 mb-2">Failed to load content.</div>
+          <button class="xp-btn" id="retry-load">Retry</button>
+        </div>`;
+      const retry = document.getElementById("retry-load");
+      if (retry) retry.onclick = () => loadPopupContent(url, title);
+      popup.classList.remove("popup-loading");
     });
 }
 
@@ -532,18 +546,57 @@ function createAppWindow(id, title, url) {
 
   // 4. Window content
   const content = document.createElement("div");
+  // Remove inner padding so loaded fragments render edge-to-edge
   content.className =
-    "w-full h-[calc(100%-2.5rem)] overflow-auto text-white p-2";
-  content.innerHTML = `<div class="text-center mt-16">Loading...</div>`;
+    "w-full h-[calc(100%-2.5rem)] overflow-auto text-white p-0";
+  // Add loading class to show header progress bar and render a skeleton
+  popup.classList.add("popup-loading");
+  content.innerHTML = getSkeletonHTML();
   fetch(url)
     .then((res) => res.text())
     .then((html) => {
-      content.innerHTML = html;
+      content.innerHTML =
+        '<div class="transition-opacity duration-200 opacity-0">' +
+        html +
+        "</div>";
+      requestAnimationFrame(() => {
+        const inner = content.firstElementChild;
+        if (inner) inner.classList.remove("opacity-0");
+      });
+      popup.classList.remove("popup-loading");
       attachRegisterFormHandler(content);
     })
     .catch(() => {
-      content.innerHTML =
-        "<div class='text-red-400'>Failed to load content.</div>";
+      content.innerHTML = `
+        <div class="p-4 text-center">
+          <div class='text-red-400 mb-2'>Failed to load content.</div>
+          <button class="xp-btn" id="retry-${id}">Retry</button>
+        </div>`;
+      const retryBtn = document.getElementById(`retry-${id}`);
+      if (retryBtn) retryBtn.onclick = () => {
+        popup.classList.add("popup-loading");
+        content.innerHTML = getSkeletonHTML();
+        // re-run fetch
+        fetch(url)
+          .then((res) => res.text())
+          .then((html) => {
+            content.innerHTML =
+              '<div class="transition-opacity duration-200 opacity-0">' +
+              html +
+              "</div>";
+            requestAnimationFrame(() => {
+              const inner = content.firstElementChild;
+              if (inner) inner.classList.remove("opacity-0");
+            });
+            popup.classList.remove("popup-loading");
+            attachRegisterFormHandler(content);
+          })
+          .catch(() => {
+            content.innerHTML =
+              "<div class='text-red-400 p-4'>Failed to load content again. Please check your connection.</div>";
+            popup.classList.remove("popup-loading");
+          });
+      };
     });
 
   // 5. Assemble popup
@@ -659,6 +712,10 @@ function createAppWindow(id, title, url) {
         popup.style.width = "600px";
         popup.style.height = "400px";
       }
+      // Restore border if previously removed
+      popup.style.border = "";
+      // Restore content height relative to header height in partial mode
+      content.style.height = "calc(100% - 2.5rem)";
       popup.dataset.state = "partial";
     } else {
       popup.style.left = "0";
@@ -666,6 +723,17 @@ function createAppWindow(id, title, url) {
       popup.style.transform = "";
       popup.style.width = "100vw";
       popup.style.height = "100vh";
+      // Remove border so the window covers the viewport edge-to-edge
+      popup.style.border = "none";
+      // Ensure content fills below the header without inner gaps
+      content.style.padding = "0";
+      // Compute content height dynamically to avoid any gap
+      try {
+        const hdrH = header.getBoundingClientRect().height || 40;
+        content.style.height = `calc(100% - ${Math.round(hdrH)}px)`;
+      } catch (_) {
+        content.style.height = "calc(100% - 2.5rem)";
+      }
       popup.dataset.state = "fullscreen";
     }
   };
@@ -700,4 +768,22 @@ function attachRegisterFormHandler(content) {
   } else {
     console.warn(" No #register-form found in loaded content");
   }
+}
+
+// Generate a simple, responsive skeleton layout for popup loading state
+function getSkeletonHTML() {
+  return `
+    <div class="w-full h-full">
+      <div class="grid grid-cols-3 gap-3 p-4 sm:p-6">
+        <div class="col-span-3 skeleton h-40 rounded-md"></div>
+        <div class="col-span-3 space-y-2">
+          <div class="skeleton h-4 w-3/4 rounded"></div>
+          <div class="skeleton h-4 w-full rounded"></div>
+          <div class="skeleton h-4 w-2/3 rounded"></div>
+        </div>
+        <div class="skeleton h-16 rounded"></div>
+        <div class="skeleton h-16 rounded"></div>
+        <div class="skeleton h-16 rounded"></div>
+      </div>
+    </div>`;
 }
