@@ -8,20 +8,20 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'main-bg': "url('/images/bg.jpg')",
+        "main-bg": "url('/images/bg.jpg')",
       },
       backgroundSize: {
-        'auto-650': 'auto 650px',
-        'auto-1300': 'auto 1300px',
-      }
+        "auto-650": "auto 650px",
+        "auto-1300": "auto 1300px",
+      },
     },
   },
   plugins: [],
   // Enable all JIT features for arbitrary values
   safelist: [
-    'bg-[url(/images/bg.jpg)]',
-    'bg-[auto_650px]',
-    'sm:bg-[auto_1300px]',
+    "bg-[url(/images/bg.jpg)]",
+    "bg-[auto_650px]",
+    "sm:bg-[auto_1300px]",
     // Add other arbitrary values you use
-  ]
+  ],
 };
