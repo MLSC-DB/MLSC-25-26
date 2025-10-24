@@ -2,8 +2,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>MLSC DB</title>
 
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
+<!-- Tailwind CSS with cache bust -->
+<script src="https://cdn.tailwindcss.com?v=<%= Date.now() %>"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        backgroundImage: {
+          'custom': "url('/images/bg.jpg')"
+        }
+      }
+    },
+    safelist: [
+      'bg-[url(/images/bg.jpg)]',
+      'bg-[auto_650px]',
+      'sm:bg-[auto_1300px]'
+    ]
+  }
+</script>
 
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
