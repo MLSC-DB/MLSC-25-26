@@ -458,26 +458,7 @@ if (process.env.TRUST_PROXY === "1" || process.env.NODE_ENV === "production") {
 // Use Helmet with stricter production defaults (CSP + HSTS)
 // Content-Security-Policy is enabled in production; in dev we disable CSP to avoid blocking dev workflows.
 const helmetOptions = {
-  contentSecurityPolicy: isProd
-    ? {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: [
-            "'self'",
-            "'unsafe-inline'",
-            "https://cdn.tailwindcss.com",
-            "https:",
-          ],
-          styleSrc: ["'self'", "'unsafe-inline'", "https:"],
-          imgSrc: ["'self'", "data:", "https:"],
-          fontSrc: ["'self'", "https:"],
-          connectSrc: ["'self'", "https:"],
-          frameAncestors: ["'none'"],
-          baseUri: ["'self'"],
-          formAction: ["'self'"],
-        },
-      }
-    : false,
+  contentSecurityPolicy: false, // TEMPORARILY DISABLED TO DEBUG CSS ISSUES
 };
 
 app.use(Helmet(helmetOptions));
