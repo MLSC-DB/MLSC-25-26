@@ -207,6 +207,37 @@ document.addEventListener("click", function (e) {
   }
 });
 
+// Context Menu Actions: About, Meet the Team, Register
+document.addEventListener("click", function (e) {
+  const cm = document.getElementById("context-menu");
+  const closeMenu = () => {
+    if (cm) {
+      cm.classList.add("hidden", "scale-0");
+      cm.classList.remove("scale-100");
+    }
+  };
+
+  const about = e.target.closest("#context-menu .about-computer");
+  const team = e.target.closest("#context-menu .mtg");
+  const registerNow = e.target.closest("#context-menu .secret-menu");
+
+  if (about) {
+    e.preventDefault();
+    try { createAppWindow("win-about", "About MLSC", "fragments/about"); } catch (_) {}
+    closeMenu();
+  }
+  if (team) {
+    e.preventDefault();
+    try { createAppWindow("win-team", "Meet the Team", "fragments/team"); } catch (_) {}
+    closeMenu();
+  }
+  if (registerNow) {
+    e.preventDefault();
+    window.location.href = "/register";
+    closeMenu();
+  }
+});
+
 // Live Clock
 function updateDateTime() {
   const now = new Date();
