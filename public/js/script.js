@@ -296,6 +296,11 @@ function loadPopupContent(url, title) {
   const popupContent = document.getElementById("popup-content");
   const popupTitle = document.getElementById("popup-title");
   popup.classList.add("popup-loading");
+  if (popupContent) {
+    // Ensure popup content area doesn't overscroll-chain and is opaque
+    popupContent.style.overscrollBehavior = "contain";
+    popupContent.style.backgroundColor = "#0b1020";
+  }
   popupContent.innerHTML = getSkeletonHTML();
   popup.classList.remove("hidden", "opacity-0", "scale-0");
   setTimeout(() => {
@@ -350,7 +355,7 @@ function loadPopupContent(url, title) {
     .then((res) => res.text())
     .then((html) => {
       popupContent.innerHTML =
-        '<div class="transition-opacity duration-200 opacity-0">' +
+        '<div class="transition-opacity duration-200 opacity-0 h-full" style="height:100%">' +
         html +
         "</div>";
       requestAnimationFrame(() => {
@@ -548,7 +553,10 @@ function createAppWindow(id, title, url) {
   const content = document.createElement("div");
   // Remove inner padding so loaded fragments render edge-to-edge
   content.className =
-    "w-full h-[calc(100%-2.5rem)] overflow-auto text-white p-0";
+    "content w-full h-[calc(100%-2.5rem)] overflow-auto text-white p-0";
+  // Prevent scroll chaining and ensure opaque dark background inside window
+  content.style.overscrollBehavior = "contain";
+  content.style.backgroundColor = "#0b1020";
   // Add loading class to show header progress bar and render a skeleton
   popup.classList.add("popup-loading");
   content.innerHTML = getSkeletonHTML();
@@ -556,7 +564,7 @@ function createAppWindow(id, title, url) {
     .then((res) => res.text())
     .then((html) => {
       content.innerHTML =
-        '<div class="transition-opacity duration-200 opacity-0">' +
+        '<div class="transition-opacity duration-200 opacity-0 h-full" style="height:100%">' +
         html +
         "</div>";
       requestAnimationFrame(() => {
@@ -573,30 +581,31 @@ function createAppWindow(id, title, url) {
           <button class="xp-btn" id="retry-${id}">Retry</button>
         </div>`;
       const retryBtn = document.getElementById(`retry-${id}`);
-      if (retryBtn) retryBtn.onclick = () => {
-        popup.classList.add("popup-loading");
-        content.innerHTML = getSkeletonHTML();
-        // re-run fetch
-        fetch(url)
-          .then((res) => res.text())
-          .then((html) => {
-            content.innerHTML =
-              '<div class="transition-opacity duration-200 opacity-0">' +
-              html +
-              "</div>";
-            requestAnimationFrame(() => {
-              const inner = content.firstElementChild;
-              if (inner) inner.classList.remove("opacity-0");
+      if (retryBtn)
+        retryBtn.onclick = () => {
+          popup.classList.add("popup-loading");
+          content.innerHTML = getSkeletonHTML();
+          // re-run fetch
+          fetch(url)
+            .then((res) => res.text())
+            .then((html) => {
+              content.innerHTML =
+                '<div class="transition-opacity duration-200 opacity-0 h-full" style="height:100%">' +
+                html +
+                "</div>";
+              requestAnimationFrame(() => {
+                const inner = content.firstElementChild;
+                if (inner) inner.classList.remove("opacity-0");
+              });
+              popup.classList.remove("popup-loading");
+              attachRegisterFormHandler(content);
+            })
+            .catch(() => {
+              content.innerHTML =
+                "<div class='text-red-400 p-4'>Failed to load content again. Please check your connection.</div>";
+              popup.classList.remove("popup-loading");
             });
-            popup.classList.remove("popup-loading");
-            attachRegisterFormHandler(content);
-          })
-          .catch(() => {
-            content.innerHTML =
-              "<div class='text-red-400 p-4'>Failed to load content again. Please check your connection.</div>";
-            popup.classList.remove("popup-loading");
-          });
-      };
+        };
     });
 
   // 5. Assemble popup
@@ -716,6 +725,8 @@ function createAppWindow(id, title, url) {
       popup.style.border = "";
       // Restore content height relative to header height in partial mode
       content.style.height = "calc(100% - 2.5rem)";
+      content.style.overscrollBehavior = "contain";
+      content.style.backgroundColor = "#0b1020";
       popup.dataset.state = "partial";
     } else {
       popup.style.left = "0";
@@ -734,6 +745,9 @@ function createAppWindow(id, title, url) {
       } catch (_) {
         content.style.height = "calc(100% - 2.5rem)";
       }
+      // Prevent overscroll chaining in fullscreen and keep opaque background
+      content.style.overscrollBehavior = "contain";
+      content.style.backgroundColor = "#0b1020";
       popup.dataset.state = "fullscreen";
     }
   };

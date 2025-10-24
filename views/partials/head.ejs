@@ -187,12 +187,26 @@
   body.lock-scroll {
     overflow: clip !important;
     height: 100vh !important;
+    overscroll-behavior: none !important; /* prevent background bounce while a popup is open */
   }
 
   html,
   body {
     max-height: 100vh;
     overflow-x: hidden;
+  }
+
+  /* Prevent scroll chaining (overscroll) from popup content to the page */
+  .popup {
+    overscroll-behavior: contain;
+    background-color: #0b1020; /* deep dark base to avoid gray flashes behind content */
+  }
+  .popup .header {
+    overscroll-behavior: contain;
+  }
+  .popup .content {
+    overscroll-behavior: contain;
+    background-color: #0b1020; /* ensure content area is opaque */
   }
 
   /* Skeleton shimmer for popup content while loading */
