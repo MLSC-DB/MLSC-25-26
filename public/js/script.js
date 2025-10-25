@@ -373,10 +373,10 @@ refreshDivs.forEach((div) => {
   });
 });
 
-// Notification Register Button -> navigate to full register page
+// Notification interactions (mobile + desktop friendly)
 const regBtn = document.querySelector(".register-button");
 if (regBtn) {
-  regBtn.addEventListener("click", function (e) {
+  onPress(regBtn, function () {
     // allow normal anchor navigation; if it's not an anchor, navigate programmatically
     if (regBtn.tagName.toLowerCase() !== "a") {
       window.location.href = "/register";
@@ -386,12 +386,48 @@ if (regBtn) {
   });
 }
 
-// Notification Close Button
-document.querySelector(".notif-close").addEventListener("click", function () {
-  const notif = document.getElementById("notification");
-  notif.classList.remove("opacity-100", "scale-100");
-  notif.classList.add("opacity-0", "scale-95");
-});
+const notifClose = document.querySelector(".notif-close");
+if (notifClose) {
+  onPress(notifClose, function () {
+    const notif = document.getElementById("notification");
+    if (!notif) return;
+    notif.classList.remove("opacity-100", "scale-100");
+    notif.classList.add("opacity-0", "scale-95");
+    // hide fully after transition
+    setTimeout(() => notif.classList.add("hidden"), 220);
+  });
+}
+
+// Tap-through: if user taps the notification box (not on its buttons),
+// dismiss it and forward the tap to the underlying element so icons open on first tap.
+const notifEl = document.getElementById("notification");
+if (notifEl) {
+  notifEl.addEventListener(
+    "pointerdown",
+    function (e) {
+      if (e.target.closest(".register-button, .notif-close")) return;
+      // Prevent this tap from focusing the notification
+      e.preventDefault();
+      e.stopPropagation();
+      const x = e.clientX;
+      const y = e.clientY;
+      // hide the notification first
+      notifEl.classList.add("hidden");
+      // forward the click after layout updates
+      setTimeout(() => {
+        const el = document.elementFromPoint(x, y);
+        if (!el) return;
+        const target = el.closest(".icon, a[href], button");
+        if (target) {
+          target.dispatchEvent(
+            new MouseEvent("click", { bubbles: true, cancelable: true })
+          );
+        }
+      }, 0);
+    },
+    { passive: false }
+  );
+}
 
 // Utility to load HTML into popup-content
 function loadPopupContent(url, title) {
