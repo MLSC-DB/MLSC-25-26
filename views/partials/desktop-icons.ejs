@@ -1,77 +1,161 @@
-<div class="column flex gap-4">
+<!-- Mobile layout: 3 icons bottom row, 2 above; bigger icons; bottom centered via index.ejs container -->
+<div class="block sm:hidden">
+  <div class="grid grid-cols-3 gap-2 place-items-center w-auto mx-auto">
+    <!-- Top row: two icons with a center spacer -->
+    <div
+      class="icon group hover:cursor-pointer w-[120px] h-[120px] relative flex items-center justify-center"
+    >
+      <img
+        src="/images/icon1.png"
+        alt="About"
+        class="group-hover:brightness-50 transition max-w-full max-h-full object-contain"
+      />
+      <div
+        class="absolute bottom-0 text-white px-1 bg-black/40 group-hover:bg-blue-800 group-hover:text-white text-[12px] text-center rounded-sm transition"
+      >
+        About_MLSC
+      </div>
+    </div>
+    <div class="w-[120px] h-[120px]"></div>
+    <a
+      href="/register"
+      class="icon group w-[120px] h-[120px] relative flex items-center justify-center no-underline"
+    >
+      <img
+        src="/images/register.png"
+        alt="Registrations"
+        class="group-hover:brightness-50 transition max-w-full max-h-full object-contain"
+      />
+      <div
+        class="absolute bottom-0 text-white px-1 bg-black/40 group-hover:bg-blue-800 group-hover:text-white text-[12px] text-center rounded-sm transition"
+      >
+        Registrations
+      </div>
+    </a>
+
+    <!-- Bottom row: 3 icons -->
+    <div
+      class="icon group hover:cursor-pointer w-[120px] h-[120px] relative flex items-center justify-center"
+    >
+      <img
+        src="/images/users.png"
+        alt="Users"
+        class="group-hover:brightness-50 transition max-w-full max-h-full object-contain"
+      />
+      <div
+        class="absolute bottom-0 text-white px-1 bg-black/40 group-hover:bg-blue-800 group-hover:text-white text-[12px] text-center rounded-sm transition"
+      >
+        Meet_the_Team
+      </div>
+    </div>
+    <div
+      class="icon group hover:cursor-pointer w-[120px] h-[120px] relative flex items-center justify-center"
+    >
+      <img
+        src="/images/tree.png"
+        alt="Timeline"
+        class="group-hover:brightness-50 transition max-w-full max-h-full object-contain"
+      />
+      <div
+        class="absolute bottom-0 text-white px-1 bg-black/40 group-hover:bg-blue-800 group-hover:text-white text-[12px] text-center rounded-sm transition"
+      >
+        Sacred_Timeline
+      </div>
+    </div>
+    <div
+      class="icon group hover:cursor-pointer w-[120px] h-[120px] relative flex items-center justify-center"
+    >
+      <img
+        src="/images/globe.png"
+        alt="Globe"
+        class="group-hover:brightness-50 transition max-w-full max-h-full object-contain"
+      />
+      <div
+        class="absolute bottom-0 text-white px-1 bg-black/40 group-hover:bg-blue-800 group-hover:text-white text-[12px] text-center rounded-sm transition"
+      >
+        the.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Desktop layout: keep original sizing and flow exactly as-is -->
+<div class="hidden sm:block">
+  <div class="column flex gap-4">
+    <div
+      class="icon group hover:cursor-pointer w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center"
+    >
+      <img
+        src="/images/icon1.png"
+        alt="About"
+        class="group-hover:brightness-50 transition"
+      />
+      <div
+        class="absolute bottom-0 text-white px-1 bg-opacity-15 group-hover:bg-blue-800 group-hover:text-white sm:text-[14px] text-[10px] text-center transition"
+      >
+        About_MLSC
+      </div>
+    </div>
+
+    <a
+      href="/register"
+      class="icon group w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center no-underline"
+    >
+      <img
+        src="/images/register.png"
+        alt="Registrations"
+        class="group-hover:brightness-50 transition"
+      />
+      <div
+        class="absolute bottom-0 text-white px-1 bg-opacity-15 group-hover:bg-blue-800 group-hover:text-white sm:text-[14px] text-[10px] text-center transition"
+      >
+        Registrations
+      </div>
+    </a>
+  </div>
+
   <div
     class="icon group hover:cursor-pointer w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center"
   >
     <img
-      src="/images/icon1.png"
-      alt="About"
+      src="/images/users.png"
+      alt="Users"
       class="group-hover:brightness-50 transition"
     />
     <div
       class="absolute bottom-0 text-white px-1 bg-opacity-15 group-hover:bg-blue-800 group-hover:text-white sm:text-[14px] text-[10px] text-center transition"
     >
-      About_MLSC
+      Meet_the_Team
     </div>
   </div>
 
-  <a
-    href="/register"
-    class="icon group w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center no-underline"
+  <div
+    class="icon group hover:cursor-pointer w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center"
   >
     <img
-      src="/images/register.png"
-      alt="Registrations"
+      src="/images/tree.png"
+      alt="Timeline"
       class="group-hover:brightness-50 transition"
     />
     <div
       class="absolute bottom-0 text-white px-1 bg-opacity-15 group-hover:bg-blue-800 group-hover:text-white sm:text-[14px] text-[10px] text-center transition"
     >
-      Registrations
+      Sacred_Timeline
     </div>
-  </a>
-</div>
-
-<div
-  class="icon group hover:cursor-pointer w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center"
->
-  <img
-    src="/images/users.png"
-    alt="Users"
-    class="group-hover:brightness-50 transition"
-  />
-  <div
-    class="absolute bottom-0 text-white px-1 bg-opacity-15 group-hover:bg-blue-800 group-hover:text-white sm:text-[14px] text-[10px] text-center transition"
-  >
-    Meet_the_Team
   </div>
-</div>
 
-<div
-  class="icon group hover:cursor-pointer w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center"
->
-  <img
-    src="/images/tree.png"
-    alt="Timeline"
-    class="group-hover:brightness-50 transition"
-  />
   <div
-    class="absolute bottom-0 text-white px-1 bg-opacity-15 group-hover:bg-blue-800 group-hover:text-white sm:text-[14px] text-[10px] text-center transition"
+    class="icon group hover:cursor-pointer w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center"
   >
-    Sacred_Timeline
-  </div>
-</div>
-
-<div
-  class="icon group hover:cursor-pointer w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center"
->
-  <img
-    src="/images/globe.png"
-    alt="Globe"
-    class="group-hover:brightness-50 transition"
-  />
-  <div
-    class="absolute bottom-0 text-white px-1 bg-opacity-15 group-hover:bg-blue-800 group-hover:text-white sm:text-[14px] text-[10px] text-center transition"
-  >
-    the.
+    <img
+      src="/images/globe.png"
+      alt="Globe"
+      class="group-hover:brightness-50 transition"
+    />
+    <div
+      class="absolute bottom-0 text-white px-1 bg-opacity-15 group-hover:bg-blue-800 group-hover:text-white sm:text-[14px] text-[10px] text-center transition"
+    >
+      the.
+    </div>
   </div>
 </div>

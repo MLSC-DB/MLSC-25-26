@@ -1,11 +1,13 @@
 <div
   id="notification"
-  class="notification absolute right-5 bottom-[70px] bg-yellow-50 rounded border-2 border-yellow-50 w-[350px] h-[200px] sm:w-[400px] sm:h-[300px] opacity-100 scale-100 transition hidden sm:block"
+  class="notification fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 sm:absolute sm:left-auto sm:top-auto sm:translate-x-0 sm:translate-y-0 sm:right-5 sm:bottom-[70px] bg-yellow-50 rounded border-2 border-yellow-50 w-[min(92vw,380px)] h-[240px] sm:w-[400px] sm:h-[300px] opacity-100 scale-100 transition"
 >
   <div
     class="notif-header w-full h-7 bg-blue-800 flex justify-between items-center"
   >
-    <div class="mx-2 text-white font-semibold font-mono hover:cursor-default">
+    <div
+      class="mx-2 text-white font-semibold font-mono text-sm sm:text-base hover:cursor-default"
+    >
       New Notification!
     </div>
     <button
@@ -15,13 +17,17 @@
     </button>
   </div>
   <div
-    class="notif-content flex justify-between items-center w-full h-28 mt-3 sm:mt-[60px]"
+    class="notif-content flex justify-between items-center w-full h-32 mt-3 sm:mt-[60px]"
   >
     <div>
-      <img src="/images/ibutton.png" alt="i_button" class="w-[200px] h-[175px]" />
+      <img
+        src="/images/ibutton.png"
+        alt="i_button"
+        class="w-[200px] h-[175px]"
+      />
     </div>
     <div
-      class="notif-message flex justify-between items-center mx-2 sm:h-full w-64 font-mono text-[10px] sm:text-sm hover:cursor-default"
+      class="notif-message flex justify-between items-center mx-2 sm:h-full w-64 font-mono text-sm sm:text-sm hover:cursor-default"
     >
       The registrations for MLSC have begun! Click on the button below or the
       'Registrations' icon on your desktop to be a part of our society.
@@ -31,7 +37,7 @@
     href="/register"
     role="button"
     aria-label="Open Register Page"
-    class="register-button inline-flex items-center justify-center w-32 h-8 sm:my-7 bg-gray-400 ml-24 sm:ml-[140px] text-sm hover:cursor-pointer hover:bg-gray-500 font-mono drop-shadow-md border-2 text-center no-underline text-black"
+    class="register-button flex items-center justify-center w-36 h-9 sm:w-32 sm:h-8 mt-4 sm:mt-7 bg-gray-400 mx-auto text-base sm:text-sm hover:cursor-pointer hover:bg-gray-500 font-mono drop-shadow-md border-2 text-center no-underline text-black"
   >
     Register
   </a>

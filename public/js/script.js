@@ -3,84 +3,98 @@ function bringToFront(win) {
   win.style.zIndex = ++zIndexCounter;
 }
 
-// disable scrolling on mobile
-document.addEventListener(
-  "touchmove",
-  function (e) {
-    e.preventDefault();
-  },
-  { passive: false }
-);
-
+// Smooth, rAF-driven draggable windows (pointer events), clamped to viewport
 function makeDraggable(popup, header) {
-  let isDragging = false,
-    startX = 0,
+  let dragging = false;
+  let startX = 0,
     startY = 0,
     origX = 0,
-    origY = 0;
+    origY = 0,
+    dx = 0,
+    dy = 0,
+    rafId = 0,
+    activePointerId = null;
 
-  function startDrag(clientX, clientY) {
-    isDragging = true;
-    startX = clientX;
-    startY = clientY;
+  const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+
+  const animate = () => {
+    rafId = 0;
+    if (!dragging) return;
+    const maxX = Math.max(0, window.innerWidth - popup.offsetWidth);
+    const maxY = Math.max(0, window.innerHeight - popup.offsetHeight);
+    const nextX = clamp(origX + dx, 0, maxX);
+    const nextY = clamp(origY + dy, 0, maxY);
+    // translate relative to original for smoothness without reflow
+    popup.style.transform = `translate(${nextX - origX}px, ${nextY - origY}px)`;
+    rafId = requestAnimationFrame(animate);
+  };
+
+  const onPointerDown = (e) => {
+    // left click / primary pointer only and avoid fullscreen drag
+    if (e.button !== undefined && e.button !== 0) return;
+    if (popup.dataset.state === "fullscreen") return;
+    // don't start drag when interacting with window controls
+    if (e.target.closest(".close-btn, .minimize-btn")) return;
+
+    bringToFront(popup);
     const rect = popup.getBoundingClientRect();
     origX = rect.left;
     origY = rect.top;
+    startX = e.clientX;
+    startY = e.clientY;
+    dx = 0;
+    dy = 0;
+    dragging = true;
+    activePointerId = e.pointerId ?? null;
+
+    // Freeze base position and use transform during drag
     popup.style.position = "fixed";
+    popup.style.left = `${origX}px`;
+    popup.style.top = `${origY}px`;
+    popup.style.right = "auto";
+    popup.style.bottom = "auto";
+    popup.style.transition = "none";
+    popup.style.willChange = "transform";
+    header.style.cursor = "grabbing";
     document.body.style.userSelect = "none";
-  }
 
-  function drag(clientX, clientY) {
-    if (!isDragging) return;
-    let dx = clientX - startX;
-    let dy = clientY - startY;
-    popup.style.left = origX + dx + "px";
-    popup.style.top = origY + dy + "px";
-  }
+    try {
+      header.setPointerCapture && header.setPointerCapture(e.pointerId);
+    } catch (_) {}
 
-  function stopDrag() {
-    isDragging = false;
+    if (!rafId) rafId = requestAnimationFrame(animate);
+  };
+
+  const onPointerMove = (e) => {
+    if (!dragging) return;
+    if (activePointerId !== null && e.pointerId !== activePointerId) return;
+    dx = e.clientX - startX;
+    dy = e.clientY - startY;
+    if (!rafId) rafId = requestAnimationFrame(animate);
+  };
+
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    const maxX = Math.max(0, window.innerWidth - popup.offsetWidth);
+    const maxY = Math.max(0, window.innerHeight - popup.offsetHeight);
+    const finalX = clamp(origX + dx, 0, maxX);
+    const finalY = clamp(origY + dy, 0, maxY);
+
+    popup.style.transform = "";
+    popup.style.left = `${finalX}px`;
+    popup.style.top = `${finalY}px`;
+    popup.style.willChange = "";
+    popup.style.transition = "";
+    header.style.cursor = "";
     document.body.style.userSelect = "";
-  }
+  };
 
-  // --- Mouse Events ---
-  header.addEventListener("mousedown", function (e) {
-    startDrag(e.clientX, e.clientY);
-  });
-
-  document.addEventListener("mousemove", function (e) {
-    drag(e.clientX, e.clientY);
-  });
-
-  document.addEventListener("mouseup", function () {
-    stopDrag();
-  });
-
-  // --- Touch Events ---
-  header.addEventListener(
-    "touchstart",
-    function (e) {
-      if (e.touches.length === 1) {
-        // single finger only
-        startDrag(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    },
-    { passive: false }
-  );
-
-  document.addEventListener(
-    "touchmove",
-    function (e) {
-      if (e.touches.length === 1) {
-        drag(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    },
-    { passive: false }
-  );
-
-  document.addEventListener("touchend", function () {
-    stopDrag();
-  });
+  // Pointer events (covers mouse + touch + pen)
+  header.addEventListener("pointerdown", onPointerDown);
+  window.addEventListener("pointermove", onPointerMove, { passive: true });
+  window.addEventListener("pointerup", endDrag, { passive: true });
+  window.addEventListener("pointercancel", endDrag, { passive: true });
 }
 
 // function makeDraggable(popup, header) {
@@ -239,6 +253,55 @@ document.addEventListener("click", function (e) {
     e.preventDefault();
     window.location.href = "/register";
     closeMenu();
+  }
+});
+
+// Start Menu Actions: mirror context menu behaviors for consistency
+document.addEventListener("click", function (e) {
+  const sm = document.getElementById("start-menu");
+  if (!sm) return;
+
+  const hideStart = () => sm.classList.add("hidden");
+
+  const about = e.target.closest("#start-menu .about-computer");
+  const team = e.target.closest("#start-menu .mtg");
+  const registerNow = e.target.closest("#start-menu .secret-menu");
+  const refresh = e.target.closest("#start-menu .refresh");
+  const contact = e.target.closest("#start-menu .contact");
+
+  if (about) {
+    e.preventDefault();
+    try {
+      createAppWindow("win-about", "About MLSC", "fragments/about");
+    } catch (_) {}
+    hideStart();
+  }
+  if (team) {
+    e.preventDefault();
+    try {
+      createAppWindow("win-team", "Meet the Team", "fragments/team");
+    } catch (_) {}
+    hideStart();
+  }
+  if (registerNow) {
+    e.preventDefault();
+    window.location.href = "/register";
+    hideStart();
+  }
+  if (refresh) {
+    e.preventDefault();
+    hideStart();
+    location.reload();
+  }
+  if (contact) {
+    e.preventDefault();
+    hideStart();
+    // Open a simple contact popup if available, else fallback to mailto
+    try {
+      createAppWindow("win-contact", "Contact Us", "fragments/comingsoon");
+    } catch (_) {
+      window.location.href = "mailto:mlsc@college.edu";
+    }
   }
 });
 
@@ -438,17 +501,18 @@ const iconMap = [
 ];
 
 iconMap.forEach(({ selector, url, title, id, action }) => {
-  const el = document.querySelector(selector);
-  if (el) {
-    el.parentElement.addEventListener("click", () => {
-      // If there's an action function, execute it instead of creating a popup
+  const nodes = document.querySelectorAll(selector);
+  if (!nodes.length) return;
+  nodes.forEach((el) => {
+    const clickable = el.closest(".icon") || el.parentElement || el;
+    clickable.addEventListener("click", () => {
       if (action && typeof action === "function") {
         action();
       } else if (url) {
         createAppWindow(id, title, url);
       }
     });
-  }
+  });
 });
 
 // Popup close button (with animation)
@@ -759,7 +823,8 @@ function createAppWindow(id, title, url) {
   popup.addEventListener("mousedown", () => bringToFront(popup));
 
   // 9. Close button
-  header.querySelector(".close-btn").onclick = () => {
+  header.querySelector(".close-btn").onclick = (e) => {
+    e.stopPropagation();
     popup.remove();
     taskBtn.remove();
 
@@ -772,7 +837,8 @@ function createAppWindow(id, title, url) {
   };
 
   // 10. Minimize/restore button
-  header.querySelector(".minimize-btn").onclick = () => {
+  header.querySelector(".minimize-btn").onclick = (e) => {
+    e.stopPropagation();
     if (popup.dataset.state === "fullscreen") {
       if (window.innerWidth < 640) {
         // Mobile: center

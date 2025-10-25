@@ -3,17 +3,16 @@
   <head>
     <%- include('partials/head') %>
   </head>
-  <body class="bg-black bg-[url(/images/bg.jpg)] bg-[auto_650px] sm:bg-[auto_1300px]">
-
+  <body
+    class="bg-black bg-[url(/images/bg.jpg)] bg-no-repeat bg-center bg-cover"
+  >
     <!-- Desktop Icons -->
-    <div id="container" class="container text-sm font-mono px-4">
+    <div id="container" class="container text-sm font-mono w-full px-8 sm:pl-5 sm:pr-0 fixed bottom-[80px] left-0 right-0 sm:static">
       <%- include('partials/desktop-icons') %>
     </div>
-    
-    <%- include('partials/taskbar') %>
-    <%- include('partials/start-menu') %>
-    <%- include('partials/context-menu') %> 
-    <%- include('partials/notification') %>
+
+    <%- include('partials/taskbar') %> <%- include('partials/start-menu') %> <%-
+    include('partials/context-menu') %> <%- include('partials/notification') %>
     <%- include('partials/preloader') %>
 
     <script src="/js/script.js"></script>
