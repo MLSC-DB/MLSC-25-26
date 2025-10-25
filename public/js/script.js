@@ -5,6 +5,11 @@ function bringToFront(win) {
 
 // Smooth, rAF-driven draggable windows (pointer events), clamped to viewport
 function makeDraggable(popup, header) {
+  // Prevent touch panning/zooming on the draggable header area (mobile)
+  try {
+    header.style.touchAction = "none";
+  } catch (_) {}
+
   let dragging = false;
   let startX = 0,
     startY = 0,
@@ -35,6 +40,8 @@ function makeDraggable(popup, header) {
     if (popup.dataset.state === "fullscreen") return;
     // don't start drag when interacting with window controls
     if (e.target.closest(".close-btn, .minimize-btn")) return;
+    // prevent default behavior (like scroll) initiating on touch
+    if (typeof e.preventDefault === "function") e.preventDefault();
 
     bringToFront(popup);
     const rect = popup.getBoundingClientRect();
@@ -68,6 +75,8 @@ function makeDraggable(popup, header) {
   const onPointerMove = (e) => {
     if (!dragging) return;
     if (activePointerId !== null && e.pointerId !== activePointerId) return;
+    // avoid scrolling while dragging on touch
+    if (typeof e.preventDefault === "function") e.preventDefault();
     dx = e.clientX - startX;
     dy = e.clientY - startY;
     if (!rafId) rafId = requestAnimationFrame(animate);
@@ -88,11 +97,18 @@ function makeDraggable(popup, header) {
     popup.style.transition = "";
     header.style.cursor = "";
     document.body.style.userSelect = "";
+    // release pointer capture if set
+    try {
+      if (activePointerId !== null) {
+        header.releasePointerCapture && header.releasePointerCapture(activePointerId);
+      }
+    } catch (_) {}
+    activePointerId = null;
   };
 
   // Pointer events (covers mouse + touch + pen)
   header.addEventListener("pointerdown", onPointerDown);
-  window.addEventListener("pointermove", onPointerMove, { passive: true });
+  window.addEventListener("pointermove", onPointerMove, { passive: false });
   window.addEventListener("pointerup", endDrag, { passive: true });
   window.addEventListener("pointercancel", endDrag, { passive: true });
 }
