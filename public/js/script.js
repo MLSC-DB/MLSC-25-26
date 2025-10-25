@@ -3,6 +3,29 @@ function bringToFront(win) {
   win.style.zIndex = ++zIndexCounter;
 }
 
+// Unified press helper: works for mouse click and touch/pen without double-trigger
+const __pressMemory = new WeakMap();
+function onPress(el, handler) {
+  if (!el) return;
+  el.addEventListener(
+    "pointerup",
+    (e) => {
+      // For touch/pen, fire immediately and mark time to ignore the synthetic click
+      if (e.pointerType && e.pointerType !== "mouse") {
+        if (typeof e.preventDefault === "function") e.preventDefault();
+        __pressMemory.set(el, Date.now());
+        handler(e);
+      }
+    },
+    { passive: false }
+  );
+  el.addEventListener("click", (e) => {
+    const last = __pressMemory.get(el) || 0;
+    if (Date.now() - last < 350) return; // ignore the synthetic click from touch
+    handler(e);
+  });
+}
+
 // Smooth, rAF-driven draggable windows (pointer events), clamped to viewport
 function makeDraggable(popup, header) {
   // Prevent touch panning/zooming on the draggable header area (mobile)
@@ -100,7 +123,8 @@ function makeDraggable(popup, header) {
     // release pointer capture if set
     try {
       if (activePointerId !== null) {
-        header.releasePointerCapture && header.releasePointerCapture(activePointerId);
+        header.releasePointerCapture &&
+          header.releasePointerCapture(activePointerId);
       }
     } catch (_) {}
     activePointerId = null;
@@ -521,7 +545,7 @@ iconMap.forEach(({ selector, url, title, id, action }) => {
   if (!nodes.length) return;
   nodes.forEach((el) => {
     const clickable = el.closest(".icon") || el.parentElement || el;
-    clickable.addEventListener("click", () => {
+    onPress(clickable, () => {
       if (action && typeof action === "function") {
         action();
       } else if (url) {
@@ -839,8 +863,9 @@ function createAppWindow(id, title, url) {
   popup.addEventListener("mousedown", () => bringToFront(popup));
 
   // 9. Close button
-  header.querySelector(".close-btn").onclick = (e) => {
-    e.stopPropagation();
+  const closeBtn = header.querySelector(".close-btn");
+  onPress(closeBtn, (e) => {
+    e.stopPropagation && e.stopPropagation();
     popup.remove();
     taskBtn.remove();
 
@@ -850,11 +875,12 @@ function createAppWindow(id, title, url) {
       document.body.classList.remove("lock-scroll");
       document.body.style.overflow = "";
     }
-  };
+  });
 
   // 10. Minimize/restore button
-  header.querySelector(".minimize-btn").onclick = (e) => {
-    e.stopPropagation();
+  const minBtn = header.querySelector(".minimize-btn");
+  onPress(minBtn, (e) => {
+    e.stopPropagation && e.stopPropagation();
     if (popup.dataset.state === "fullscreen") {
       if (window.innerWidth < 640) {
         // Mobile: center
@@ -899,7 +925,7 @@ function createAppWindow(id, title, url) {
       content.style.backgroundColor = "#0b1020";
       popup.dataset.state = "fullscreen";
     }
-  };
+  });
 
   // 11. Make draggable
   makeDraggable(popup, header);
