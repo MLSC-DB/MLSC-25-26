@@ -4,3 +4,22 @@ dist/
 build/
 logs
 *.log
+
+# IDE/Editor settings (keep local)
+.vscode/
+.idea/
+
+# Sensitive files
+service-account.json
+*.pem
+*.key
+
+# Development files
+cleanup-production.js
+test-*.js
+debug-*.js
+verify-*.js
+
+# Temporary files
+*.tmp
+*.temp

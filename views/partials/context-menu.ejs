@@ -1,3 +1,19 @@
+<style>
+  @keyframes rainbow-move {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  .rainbow-text {
+    background: linear-gradient(90deg, #ff004c, #ff7a00, #ffd400, #21d19f, #00b3ff, #5a00ff, #ff00ea, #ff004c);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: rainbow-move 3s linear infinite;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+  }
+</style>
+
 <div
   id="context-menu"
   class="rounded shadow-lg w-[300px] h-[204px] font-mono hidden bg-gray-500 absolute bottom-10 left-0 border-2 border-slate-50 mx-0.5 my-1 z-50 scale-90 drop-shadow-lg"
@@ -25,6 +41,8 @@
   <div
     class="secret-menu bg-slate-50 h-10 text-black hover:text-white hover:cursor-pointer hover:bg-blue-800 flex flex-col align-middle justify-center px-2"
   >
-    Secret Menu
+    <span class="font-bold text-green-500 animate-pulse tracking-wide"
+      >REGISTER NOW!</span
+    >
   </div>
 </div>

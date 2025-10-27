@@ -1,0 +1,24 @@
+{
+  "liveServer.settings.port": 5501,
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "emmet.includeLanguages": {
+    "tailwindcss": "css"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "tailwindCSS.includeLanguages": {
+    "css": "css",
+    "html": "html",
+    "ejs": "html"
+  },
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className"
+  ]
+}

@@ -1,0 +1,44 @@
+/* register.css - migrated from register2.html/style.css and tailored for register view */
+:root{
+  --primary-color:#4FD1FF; /* brighter cyan */
+  --secondary-color:#7C5CFF; /* subtle purple accent */
+  --background-color:#061226; /* slightly darker */
+  --text-color:#E6EEF9; /* softer white */
+  --border-color:#4FD1FF;
+}
+html,body{height:100%;}
+html{background-color:#051022;background-image:linear-gradient(180deg,#051022 0%,#071733 50%,#031826 100%);background-repeat:no-repeat;background-attachment:fixed;background-size:cover;background-position:center center;overscroll-behavior:none;min-height:100vh}
+body{background:transparent;font-family:'VT323',monospace;color:var(--text-color);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.scanline-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom,rgba(18,18,18,0) 50%,rgba(0,0,0,0.25) 50%);background-size:100% 4px;animation:scanline 20s linear infinite;z-index:10;pointer-events:none;opacity:0.4}
+@keyframes scanline{0%{background-position:0 0}100%{background-position:0 100vh}}
+.background-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(to right,rgba(0,191,255,0.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,191,255,0.1) 1px,transparent 1px);background-size:50px 50px;animation:move-circuit 30s linear infinite;z-index:-1;opacity:0.5}
+@keyframes move-circuit{0%{background-position:0 0}100%{background-position:100px 50px}}
+.background-glow{position:fixed;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(ellipse at 15% 85%,var(--secondary-color),transparent 50%),radial-gradient(ellipse at 85% 15%,var(--primary-color),transparent 60%);opacity:0.2;animation:pulse-glow 5s infinite alternate;z-index:-2}
+@keyframes pulse-glow{0%{opacity:0.15}50%{opacity:0.25}100%{opacity:0.15}}
+/* glass and form styling (kept minimal) */
+.glass{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);-webkit-backdrop-filter:blur(8px) saturate(120%);backdrop-filter:blur(8px) saturate(120%)}
+.finput{background:#071122;border:1px solid rgba(43,43,74,0.9);color:var(--text-color);transition:box-shadow .18s ease,border-color .18s ease,transform .12s ease}
+.finput:focus{outline:none;box-shadow:0 10px 40px rgba(124,58,237,.08);border-image:linear-gradient(90deg,#7c3aed,#06b6d4) 1;transform:translateY(-1px)}
+/* ensure registration page specific overrides */
+.register-container{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2.25rem 0.75rem}
+.register-panel{width:100%;max-width:880px}
+.register-header{display:flex;flex-direction:column;align-items:center;margin-bottom:0.75rem}
+.register-header h1{font-family:'Press Start 2P',cursive;color:var(--primary-color);text-shadow:0 0 8px var(--primary-color),0 0 24px var(--secondary-color);letter-spacing:2px}
+.register-panel .glass{padding:2rem;border-radius:14px}
+/* CTA */
+.glow-accent{box-shadow:0 10px 40px rgba(124,58,237,.08);transition:transform .18s ease,box-shadow .22s ease}
+.glow-accent:hover{transform:translateY(-3px);box-shadow:0 20px 80px rgba(6,182,212,.08)}
+/* preferences */
+.pref-hidden{display:none}
+.pref-animate-in{transform-origin:top center;will-change:transform,opacity;animation:prefPopIn 220ms ease-out both}
+.pref-animate-out{transform-origin:top center;will-change:transform,opacity;animation:prefPopOut 160ms ease-out both}
+@keyframes prefPopIn{0%{opacity:0;transform:translateY(-6px) scale(.995)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes prefPopOut{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-6px) scale(.995)}}
+/* small helpers */
+.muted{color:rgba(226,232,240,.72)}
+.container-pad{padding-left:1rem;padding-right:1rem}
+.member-card{transition:transform .18s ease,box-shadow .18s ease}
+.member-card:hover{transform:translateY(-6px);box-shadow:0 18px 48px rgba(6,182,212,.06)}
+/* noise overlay */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.08' /></svg>");opacity:.06;mix-blend-mode:overlay;z-index:-1}
+@media (prefers-reduced-motion:reduce){.pref-animate-in,.pref-animate-out,.member-card{animation:none!important;transition:none!important}}

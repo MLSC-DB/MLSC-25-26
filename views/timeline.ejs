@@ -15,6 +15,45 @@
   <link rel="stylesheet" crossorigin href="/timeline/assets/index-DGDwhTZo.css">
 
   <style>
+    /* Full-page loader overlay (unique for Timeline) */
+    #timeline-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(1200px 800px at 50% 30%, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98));
+      color: #e2e8f0;
+      transition: opacity 300ms ease;
+    }
+    #timeline-loader.hide { opacity: 0; pointer-events: none; }
+    .tl-inner {
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      text-align: center;
+    }
+    .tl-title { font-size: 18px; letter-spacing: 0.1em; color: #93c5fd; }
+    .tl-sub { font-size: 12px; color: #9ca3af; }
+    .tl-bar {
+      width: 240px; height: 6px; border-radius: 999px; background: rgba(148, 163, 184, 0.2); overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.25);
+    }
+    .tl-bar > div {
+      width: 40%; height: 100%; background: linear-gradient(90deg, #22c55e, #06b6d4);
+      border-radius: inherit; animation: tl-indet 1.2s ease-in-out infinite;
+    }
+    @keyframes tl-indet {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(40%); }
+      100% { transform: translateX(200%); }
+    }
+    .tl-dots { display: flex; gap: 6px; }
+    .tl-dot { width: 6px; height: 6px; border-radius: 50%; background: #60a5fa; opacity: 0.3; animation: tl-pulse 1.2s infinite; }
+    .tl-dot:nth-child(2) { animation-delay: 0.2s; }
+    .tl-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes tl-pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.9; } }
+
     /* Back Button */
     .back-button {
       position: fixed;
@@ -70,6 +109,15 @@
 </head>
 
 <body class="bg-black min-h-screen w-full overflow-x-hidden">
+  <!-- Timeline Loader Overlay -->
+  <div id="timeline-loader" role="status" aria-live="polite" aria-label="Loading timeline">
+    <div class="tl-inner">
+      <div class="tl-title">Loading Sacred Timeline…</div>
+      <div class="tl-bar"><div></div></div>
+      <div class="tl-dots"><div class="tl-dot"></div><div class="tl-dot"></div><div class="tl-dot"></div></div>
+      <div class="tl-sub">Fetching 3D assets and initializing WebGL</div>
+    </div>
+  </div>
   <!-- Back Button -->
   <a href="/" class="back-button">
     Home
@@ -147,6 +195,46 @@
   </div>
 </div>
   <div id="container3d" class="fixed inset-0 z-10 pointer-events-none"><canvas id="canvas"></canvas></div>
+
+
+  <script>
+    // Hide timeline loader when WebGL canvas has been initialized, with a safe fallback
+    (function(){
+      function hideLoader(){
+        var el = document.getElementById('timeline-loader');
+        if (!el) return;
+        el.classList.add('hide');
+        setTimeout(function(){ if (el && el.parentNode) el.parentNode.removeChild(el); }, 400);
+      }
+
+      window.addEventListener('load', function(){
+        var start = Date.now();
+        var canvas = document.getElementById('canvas');
+        var tries = 0, maxTries = 80; // ~16s @ 200ms
+        var timer = setInterval(function(){
+          tries++;
+          canvas = canvas || document.getElementById('canvas');
+          if (canvas) {
+            var sized = canvas.clientWidth > 0 && canvas.clientHeight > 0;
+            var gl = null;
+            try {
+              gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            } catch(e) {}
+            if (sized && gl) {
+              hideLoader();
+              clearInterval(timer);
+              return;
+            }
+          }
+          if (tries >= maxTries) { // fallback to avoid trapping if something changes
+            hideLoader();
+            clearInterval(timer);
+          }
+        }, 200);
+      });
+    })();
+  </script>
+
 </body>
 
 </html>

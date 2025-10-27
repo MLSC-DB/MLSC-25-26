@@ -3,74 +3,139 @@ function bringToFront(win) {
   win.style.zIndex = ++zIndexCounter;
 }
 
-// disable scrolling on mobile
-document.addEventListener('touchmove', function (e) {
-  e.preventDefault();
-}, { passive: false });
-
-
-function makeDraggable(popup, header) {
-  let isDragging = false,
-    startX = 0,
-    startY = 0,
-    origX = 0,
-    origY = 0;
-
-  function startDrag(clientX, clientY) {
-    isDragging = true;
-    startX = clientX;
-    startY = clientY;
-    const rect = popup.getBoundingClientRect();
-    origX = rect.left;
-    origY = rect.top;
-    popup.style.position = "fixed";
-    document.body.style.userSelect = "none";
-  }
-
-  function drag(clientX, clientY) {
-    if (!isDragging) return;
-    let dx = clientX - startX;
-    let dy = clientY - startY;
-    popup.style.left = origX + dx + "px";
-    popup.style.top = origY + dy + "px";
-  }
-
-  function stopDrag() {
-    isDragging = false;
-    document.body.style.userSelect = "";
-  }
-
-  // --- Mouse Events ---
-  header.addEventListener("mousedown", function (e) {
-    startDrag(e.clientX, e.clientY);
-  });
-
-  document.addEventListener("mousemove", function (e) {
-    drag(e.clientX, e.clientY);
-  });
-
-  document.addEventListener("mouseup", function () {
-    stopDrag();
-  });
-
-  // --- Touch Events ---
-  header.addEventListener("touchstart", function (e) {
-    if (e.touches.length === 1) { // single finger only
-      startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    }
-  }, { passive: false });
-
-  document.addEventListener("touchmove", function (e) {
-    if (e.touches.length === 1) {
-      drag(e.touches[0].clientX, e.touches[0].clientY);
-    }
-  }, { passive: false });
-
-  document.addEventListener("touchend", function () {
-    stopDrag();
+// Unified press helper: works for mouse click and touch/pen without double-trigger
+const __pressMemory = new WeakMap();
+function onPress(el, handler) {
+  if (!el) return;
+  el.addEventListener(
+    "pointerup",
+    (e) => {
+      // For touch/pen, fire immediately and mark time to ignore the synthetic click
+      if (e.pointerType && e.pointerType !== "mouse") {
+        if (typeof e.preventDefault === "function") e.preventDefault();
+        __pressMemory.set(el, Date.now());
+        handler(e);
+      }
+    },
+    { passive: false }
+  );
+  el.addEventListener("click", (e) => {
+    const last = __pressMemory.get(el) || 0;
+    if (Date.now() - last < 350) return; // ignore the synthetic click from touch
+    handler(e);
   });
 }
 
+// Smooth, rAF-driven draggable windows (pointer events), clamped to viewport
+function makeDraggable(popup, header) {
+  // Prevent touch panning/zooming on the draggable header area (mobile)
+  try {
+    header.style.touchAction = "none";
+  } catch (_) {}
+
+  let dragging = false;
+  let startX = 0,
+    startY = 0,
+    origX = 0,
+    origY = 0,
+    dx = 0,
+    dy = 0,
+    rafId = 0,
+    activePointerId = null;
+
+  const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+
+  const animate = () => {
+    rafId = 0;
+    if (!dragging) return;
+    const maxX = Math.max(0, window.innerWidth - popup.offsetWidth);
+    const maxY = Math.max(0, window.innerHeight - popup.offsetHeight);
+    const nextX = clamp(origX + dx, 0, maxX);
+    const nextY = clamp(origY + dy, 0, maxY);
+    // translate relative to original for smoothness without reflow
+    popup.style.transform = `translate(${nextX - origX}px, ${nextY - origY}px)`;
+    rafId = requestAnimationFrame(animate);
+  };
+
+  const onPointerDown = (e) => {
+    // left click / primary pointer only and avoid fullscreen drag
+    if (e.button !== undefined && e.button !== 0) return;
+    if (popup.dataset.state === "fullscreen") return;
+    // don't start drag when interacting with window controls
+    if (e.target.closest(".close-btn, .minimize-btn")) return;
+    // prevent default behavior (like scroll) initiating on touch
+    if (typeof e.preventDefault === "function") e.preventDefault();
+
+    bringToFront(popup);
+    const rect = popup.getBoundingClientRect();
+    origX = rect.left;
+    origY = rect.top;
+    startX = e.clientX;
+    startY = e.clientY;
+    dx = 0;
+    dy = 0;
+    dragging = true;
+    activePointerId = e.pointerId ?? null;
+
+    // Freeze base position and use transform during drag
+    popup.style.position = "fixed";
+    popup.style.left = `${origX}px`;
+    popup.style.top = `${origY}px`;
+    popup.style.right = "auto";
+    popup.style.bottom = "auto";
+    popup.style.transition = "none";
+    popup.style.willChange = "transform";
+    header.style.cursor = "grabbing";
+    document.body.style.userSelect = "none";
+
+    try {
+      header.setPointerCapture && header.setPointerCapture(e.pointerId);
+    } catch (_) {}
+
+    if (!rafId) rafId = requestAnimationFrame(animate);
+  };
+
+  const onPointerMove = (e) => {
+    if (!dragging) return;
+    if (activePointerId !== null && e.pointerId !== activePointerId) return;
+    // avoid scrolling while dragging on touch
+    if (typeof e.preventDefault === "function") e.preventDefault();
+    dx = e.clientX - startX;
+    dy = e.clientY - startY;
+    if (!rafId) rafId = requestAnimationFrame(animate);
+  };
+
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    const maxX = Math.max(0, window.innerWidth - popup.offsetWidth);
+    const maxY = Math.max(0, window.innerHeight - popup.offsetHeight);
+    const finalX = clamp(origX + dx, 0, maxX);
+    const finalY = clamp(origY + dy, 0, maxY);
+
+    popup.style.transform = "";
+    popup.style.left = `${finalX}px`;
+    popup.style.top = `${finalY}px`;
+    popup.style.willChange = "";
+    popup.style.transition = "";
+    header.style.cursor = "";
+    document.body.style.userSelect = "";
+    // release pointer capture if set
+    try {
+      if (activePointerId !== null) {
+        header.releasePointerCapture &&
+          header.releasePointerCapture(activePointerId);
+      }
+    } catch (_) {}
+    activePointerId = null;
+  };
+
+  // Pointer events (covers mouse + touch + pen)
+  header.addEventListener("pointerdown", onPointerDown);
+  window.addEventListener("pointermove", onPointerMove, { passive: false });
+  window.addEventListener("pointerup", endDrag, { passive: true });
+  window.addEventListener("pointercancel", endDrag, { passive: true });
+}
 
 // function makeDraggable(popup, header) {
 //   let isDragging = false,
@@ -196,6 +261,90 @@ document.addEventListener("click", function (e) {
   }
 });
 
+// Context Menu Actions: About, Meet the Team, Register
+document.addEventListener("click", function (e) {
+  const cm = document.getElementById("context-menu");
+  const closeMenu = () => {
+    if (cm) {
+      cm.classList.add("hidden", "scale-0");
+      cm.classList.remove("scale-100");
+    }
+  };
+
+  const about = e.target.closest("#context-menu .about-computer");
+  const team = e.target.closest("#context-menu .mtg");
+  const registerNow = e.target.closest("#context-menu .secret-menu");
+
+  if (about) {
+    e.preventDefault();
+    try {
+      createAppWindow("win-about", "About MLSC", "fragments/about");
+    } catch (_) {}
+    closeMenu();
+  }
+  if (team) {
+    e.preventDefault();
+    try {
+      createAppWindow("win-team", "Meet the Team", "fragments/team");
+    } catch (_) {}
+    closeMenu();
+  }
+  if (registerNow) {
+    e.preventDefault();
+    window.location.href = "/register";
+    closeMenu();
+  }
+});
+
+// Start Menu Actions: mirror context menu behaviors for consistency
+document.addEventListener("click", function (e) {
+  const sm = document.getElementById("start-menu");
+  if (!sm) return;
+
+  const hideStart = () => sm.classList.add("hidden");
+
+  const about = e.target.closest("#start-menu .about-computer");
+  const team = e.target.closest("#start-menu .mtg");
+  const registerNow = e.target.closest("#start-menu .secret-menu");
+  const refresh = e.target.closest("#start-menu .refresh");
+  const contact = e.target.closest("#start-menu .contact");
+
+  if (about) {
+    e.preventDefault();
+    try {
+      createAppWindow("win-about", "About MLSC", "fragments/about");
+    } catch (_) {}
+    hideStart();
+  }
+  if (team) {
+    e.preventDefault();
+    try {
+      createAppWindow("win-team", "Meet the Team", "fragments/team");
+    } catch (_) {}
+    hideStart();
+  }
+  if (registerNow) {
+    e.preventDefault();
+    window.location.href = "/register";
+    hideStart();
+  }
+  if (refresh) {
+    e.preventDefault();
+    hideStart();
+    location.reload();
+  }
+  if (contact) {
+    e.preventDefault();
+    hideStart();
+    // Open a simple contact popup if available, else fallback to mailto
+    try {
+      createAppWindow("win-contact", "Contact Us", "fragments/comingsoon");
+    } catch (_) {
+      window.location.href = "mailto:mlsc@college.edu";
+    }
+  }
+});
+
 // Live Clock
 function updateDateTime() {
   const now = new Date();
@@ -224,30 +373,74 @@ refreshDivs.forEach((div) => {
   });
 });
 
-// Notification Register Button
-document
-  .querySelector(".register-button")
-  .addEventListener("click", function () {
-    createAppWindow("win-register", "Registrations", "/fragments/register");
-
+// Notification interactions (mobile + desktop friendly)
+const regBtn = document.querySelector(".register-button");
+if (regBtn) {
+  onPress(regBtn, function () {
+    // allow normal anchor navigation; if it's not an anchor, navigate programmatically
+    if (regBtn.tagName.toLowerCase() !== "a") {
+      window.location.href = "/register";
+    }
     const notification = document.getElementById("notification");
-    notification.classList.add("hidden");
+    if (notification) notification.classList.add("hidden");
   });
+}
 
-// Notification Close Button
-document.querySelector(".notif-close").addEventListener("click", function () {
-  const notif = document.getElementById("notification");
-  notif.classList.remove("opacity-100", "scale-100");
-  notif.classList.add("opacity-0", "scale-95");
-});
+const notifClose = document.querySelector(".notif-close");
+if (notifClose) {
+  onPress(notifClose, function () {
+    const notif = document.getElementById("notification");
+    if (!notif) return;
+    notif.classList.remove("opacity-100", "scale-100");
+    notif.classList.add("opacity-0", "scale-95");
+    // hide fully after transition
+    setTimeout(() => notif.classList.add("hidden"), 220);
+  });
+}
+
+// Tap-through: if user taps the notification box (not on its buttons),
+// dismiss it and forward the tap to the underlying element so icons open on first tap.
+const notifEl = document.getElementById("notification");
+if (notifEl) {
+  notifEl.addEventListener(
+    "pointerdown",
+    function (e) {
+      if (e.target.closest(".register-button, .notif-close")) return;
+      // Prevent this tap from focusing the notification
+      e.preventDefault();
+      e.stopPropagation();
+      const x = e.clientX;
+      const y = e.clientY;
+      // hide the notification first
+      notifEl.classList.add("hidden");
+      // forward the click after layout updates
+      setTimeout(() => {
+        const el = document.elementFromPoint(x, y);
+        if (!el) return;
+        const target = el.closest(".icon, a[href], button");
+        if (target) {
+          target.dispatchEvent(
+            new MouseEvent("click", { bubbles: true, cancelable: true })
+          );
+        }
+      }, 0);
+    },
+    { passive: false }
+  );
+}
 
 // Utility to load HTML into popup-content
 function loadPopupContent(url, title) {
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
   const popupTitle = document.getElementById("popup-title");
-  popupContent.innerHTML =
-    '<div class="text-center my-8 text-white">Loading...</div>';
+  popup.classList.add("popup-loading");
+  if (popupContent) {
+    // Ensure popup content area doesn't overscroll-chain and is opaque
+    popupContent.style.overscrollBehavior = "contain";
+    popupContent.style.backgroundColor = "#0b1020";
+  }
+  popupContent.innerHTML = getSkeletonHTML();
   popup.classList.remove("hidden", "opacity-0", "scale-0");
   setTimeout(() => {
     popup.classList.add("opacity-100", "scale-100");
@@ -300,11 +493,48 @@ function loadPopupContent(url, title) {
   fetch(url)
     .then((res) => res.text())
     .then((html) => {
-      popupContent.innerHTML = html;
+      popupContent.innerHTML =
+        '<div class="transition-opacity duration-200 opacity-0 h-full" style="height:100%">' +
+        html +
+        "</div>";
+      requestAnimationFrame(() => {
+        const inner = popupContent.firstElementChild;
+        if (!inner) return;
+        const imgs = inner.querySelectorAll("img");
+        if (imgs.length) {
+          let loaded = 0,
+            total = imgs.length;
+          const done = () => inner.classList.remove("opacity-0");
+          imgs.forEach((img) => {
+            if (img.complete) {
+              if (++loaded === total) done();
+            } else {
+              const onEnd = () => {
+                img.removeEventListener("load", onEnd);
+                img.removeEventListener("error", onEnd);
+                if (++loaded === total) done();
+              };
+              img.addEventListener("load", onEnd);
+              img.addEventListener("error", onEnd);
+            }
+          });
+          // safety timeout in case events don’t fire
+          setTimeout(done, 4000);
+        } else {
+          inner.classList.remove("opacity-0");
+        }
+      });
+      popup.classList.remove("popup-loading");
     })
     .catch(() => {
-      popupContent.innerHTML =
-        '<div class="text-red-500 p-4">Failed to load content.</div>';
+      popupContent.innerHTML = `
+        <div class="p-4 text-center">
+          <div class="text-red-400 mb-2">Failed to load content.</div>
+          <button class="xp-btn" id="retry-load">Retry</button>
+        </div>`;
+      const retry = document.getElementById("retry-load");
+      if (retry) retry.onclick = () => loadPopupContent(url, title);
+      popup.classList.remove("popup-loading");
     });
 }
 
@@ -318,7 +548,9 @@ const iconMap = [
   },
   {
     selector: 'img[alt="Registrations"]',
-    url: "fragments/register",
+    action: () => {
+      window.location.href = "/register";
+    },
     title: "Registrations",
     id: "win-register",
   },
@@ -345,17 +577,18 @@ const iconMap = [
 ];
 
 iconMap.forEach(({ selector, url, title, id, action }) => {
-  const el = document.querySelector(selector);
-  if (el) {
-    el.parentElement.addEventListener("click", () => {
-      // If there's an action function, execute it instead of creating a popup
+  const nodes = document.querySelectorAll(selector);
+  if (!nodes.length) return;
+  nodes.forEach((el) => {
+    const clickable = el.closest(".icon") || el.parentElement || el;
+    onPress(clickable, () => {
       if (action && typeof action === "function") {
         action();
       } else if (url) {
         createAppWindow(id, title, url);
       }
     });
-  }
+  });
 });
 
 // Popup close button (with animation)
@@ -481,18 +714,105 @@ function createAppWindow(id, title, url) {
 
   // 4. Window content
   const content = document.createElement("div");
+  // Remove inner padding so loaded fragments render edge-to-edge
   content.className =
-    "w-full h-[calc(100%-2.5rem)] overflow-auto text-white p-2";
-  content.innerHTML = `<div class="text-center mt-16">Loading...</div>`;
+    "content w-full h-[calc(100%-2.5rem)] overflow-auto text-white p-0";
+  // Prevent scroll chaining and ensure opaque dark background inside window
+  content.style.overscrollBehavior = "contain";
+  content.style.backgroundColor = "#0b1020";
+  // Add loading class to show header progress bar and render a skeleton
+  popup.classList.add("popup-loading");
+  content.innerHTML = getSkeletonHTML();
   fetch(url)
     .then((res) => res.text())
     .then((html) => {
-      content.innerHTML = html;
+      content.innerHTML =
+        '<div class="transition-opacity duration-200 opacity-0 h-full" style="height:100%">' +
+        html +
+        "</div>";
+      requestAnimationFrame(() => {
+        const inner = content.firstElementChild;
+        if (!inner) return;
+        const imgs = inner.querySelectorAll("img");
+        if (imgs.length) {
+          let loaded = 0,
+            total = imgs.length;
+          const done = () => inner.classList.remove("opacity-0");
+          imgs.forEach((img) => {
+            if (img.complete) {
+              if (++loaded === total) done();
+            } else {
+              const onEnd = () => {
+                img.removeEventListener("load", onEnd);
+                img.removeEventListener("error", onEnd);
+                if (++loaded === total) done();
+              };
+              img.addEventListener("load", onEnd);
+              img.addEventListener("error", onEnd);
+            }
+          });
+          setTimeout(done, 4000);
+        } else {
+          inner.classList.remove("opacity-0");
+        }
+      });
+      popup.classList.remove("popup-loading");
       attachRegisterFormHandler(content);
     })
     .catch(() => {
-      content.innerHTML =
-        "<div class='text-red-400'>Failed to load content.</div>";
+      content.innerHTML = `
+        <div class="p-4 text-center">
+          <div class='text-red-400 mb-2'>Failed to load content.</div>
+          <button class="xp-btn" id="retry-${id}">Retry</button>
+        </div>`;
+      const retryBtn = document.getElementById(`retry-${id}`);
+      if (retryBtn)
+        retryBtn.onclick = () => {
+          popup.classList.add("popup-loading");
+          content.innerHTML = getSkeletonHTML();
+          // re-run fetch
+          fetch(url)
+            .then((res) => res.text())
+            .then((html) => {
+              content.innerHTML =
+                '<div class="transition-opacity duration-200 opacity-0 h-full" style="height:100%">' +
+                html +
+                "</div>";
+              requestAnimationFrame(() => {
+                const inner = content.firstElementChild;
+                if (!inner) return;
+                const imgs = inner.querySelectorAll("img");
+                if (imgs.length) {
+                  let loaded = 0,
+                    total = imgs.length;
+                  const done = () => inner.classList.remove("opacity-0");
+                  imgs.forEach((img) => {
+                    if (img.complete) {
+                      if (++loaded === total) done();
+                    } else {
+                      const onEnd = () => {
+                        img.removeEventListener("load", onEnd);
+                        img.removeEventListener("error", onEnd);
+                        if (++loaded === total) done();
+                      };
+                      img.addEventListener("load", onEnd);
+                      img.addEventListener("error", onEnd);
+                    }
+                  });
+                  setTimeout(done, 4000);
+                } else {
+                  inner.classList.remove("opacity-0");
+                }
+              });
+              popup.classList.remove("popup-loading");
+              attachRegisterFormHandler(content);
+            })
+            .catch(() => {
+              content.innerHTML =
+                "<div class='text-red-400 p-4'>Failed to load content again. Please check your connection.</div>";
+              popup.classList.remove("popup-loading");
+            });
+        };
     });
 
   // 5. Assemble popup
@@ -530,7 +850,8 @@ function createAppWindow(id, title, url) {
 
   //  Add label text (disable on small screens)
   const textSpan = document.createElement("span");
-  if (window.innerWidth >= 640) { // Show label only on screens >= 640px (sm)
+  if (window.innerWidth >= 640) {
+    // Show label only on screens >= 640px (sm)
     textSpan.textContent = title;
   }
 
@@ -578,7 +899,9 @@ function createAppWindow(id, title, url) {
   popup.addEventListener("mousedown", () => bringToFront(popup));
 
   // 9. Close button
-  header.querySelector(".close-btn").onclick = () => {
+  const closeBtn = header.querySelector(".close-btn");
+  onPress(closeBtn, (e) => {
+    e.stopPropagation && e.stopPropagation();
     popup.remove();
     taskBtn.remove();
 
@@ -588,10 +911,12 @@ function createAppWindow(id, title, url) {
       document.body.classList.remove("lock-scroll");
       document.body.style.overflow = "";
     }
-  };
+  });
 
   // 10. Minimize/restore button
-  header.querySelector(".minimize-btn").onclick = () => {
+  const minBtn = header.querySelector(".minimize-btn");
+  onPress(minBtn, (e) => {
+    e.stopPropagation && e.stopPropagation();
     if (popup.dataset.state === "fullscreen") {
       if (window.innerWidth < 640) {
         // Mobile: center
@@ -607,6 +932,12 @@ function createAppWindow(id, title, url) {
         popup.style.width = "600px";
         popup.style.height = "400px";
       }
+      // Restore border if previously removed
+      popup.style.border = "";
+      // Restore content height relative to header height in partial mode
+      content.style.height = "calc(100% - 2.5rem)";
+      content.style.overscrollBehavior = "contain";
+      content.style.backgroundColor = "#0b1020";
       popup.dataset.state = "partial";
     } else {
       popup.style.left = "0";
@@ -614,9 +945,23 @@ function createAppWindow(id, title, url) {
       popup.style.transform = "";
       popup.style.width = "100vw";
       popup.style.height = "100vh";
+      // Remove border so the window covers the viewport edge-to-edge
+      popup.style.border = "none";
+      // Ensure content fills below the header without inner gaps
+      content.style.padding = "0";
+      // Compute content height dynamically to avoid any gap
+      try {
+        const hdrH = header.getBoundingClientRect().height || 40;
+        content.style.height = `calc(100% - ${Math.round(hdrH)}px)`;
+      } catch (_) {
+        content.style.height = "calc(100% - 2.5rem)";
+      }
+      // Prevent overscroll chaining in fullscreen and keep opaque background
+      content.style.overscrollBehavior = "contain";
+      content.style.backgroundColor = "#0b1020";
       popup.dataset.state = "fullscreen";
     }
-  };
+  });
 
   // 11. Make draggable
   makeDraggable(popup, header);
@@ -648,4 +993,22 @@ function attachRegisterFormHandler(content) {
   } else {
     console.warn(" No #register-form found in loaded content");
   }
+}
+
+// Generate a simple, responsive skeleton layout for popup loading state
+function getSkeletonHTML() {
+  return `
+    <div class="w-full h-full">
+      <div class="grid grid-cols-3 gap-3 p-4 sm:p-6">
+        <div class="col-span-3 skeleton h-40 rounded-md"></div>
+        <div class="col-span-3 space-y-2">
+          <div class="skeleton h-4 w-3/4 rounded"></div>
+          <div class="skeleton h-4 w-full rounded"></div>
+          <div class="skeleton h-4 w-2/3 rounded"></div>
+        </div>
+        <div class="skeleton h-16 rounded"></div>
+        <div class="skeleton h-16 rounded"></div>
+        <div class="skeleton h-16 rounded"></div>
+      </div>
+    </div>`;
 }

@@ -1,0 +1,71 @@
+name: mlsc-registration-app
+services:
+  - name: web
+    source_dir: /
+    github:
+      repo: MLSC-DB/MLSC-25-26
+      branch: main
+      deploy_on_push: true
+    run_command: npm start
+    build_command: npm run build:css
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    health_check:
+      http_path: /healthz
+      initial_delay_seconds: 60
+      period_seconds: 30
+      timeout_seconds: 10
+      failure_threshold: 3
+      success_threshold: 2
+    envs:
+      - key: NODE_ENV
+        value: production
+        type: SECRET
+      - key: PORT
+        value: "8080"
+        type: SECRET
+      - key: SESSION_SECRET
+        value: REPLACE_WITH_YOUR_SESSION_SECRET
+        type: SECRET
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+        type: SECRET
+      - key: MONGODB_URI
+        value: REPLACE_WITH_YOUR_ATLAS_CONNECTION_STRING
+        type: SECRET
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+        type: SECRET
+      - key: SMTP_PORT
+        value: "587"
+        type: SECRET
+      - key: SMTP_SECURE
+        value: "false"
+        type: SECRET
+      - key: SMTP_USER
+        value: REPLACE_WITH_YOUR_SMTP_USER
+        type: SECRET
+      - key: SMTP_PASS
+        value: REPLACE_WITH_YOUR_SMTP_PASS
+        type: SECRET
+      - key: MAIL_FROM
+        value: REPLACE_WITH_YOUR_MAIL_FROM
+        type: SECRET
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON_BASE64
+        value: REPLACE_WITH_BASE64_SERVICE_ACCOUNT
+        type: SECRET
+      - key: GOOGLE_SHEETS_ID
+        value: REPLACE_WITH_YOUR_SHEETS_ID
+        type: SECRET
+      - key: DISCORD_INVITE
+        value: REPLACE_WITH_YOUR_DISCORD_INVITE
+        type: SECRET
+      - key: ADMIN_USERNAME
+        value: admin
+        type: SECRET
+      - key: ADMIN_PASSWORD
+        value: REPLACE_WITH_SECURE_ADMIN_PASSWORD
+        type: SECRET

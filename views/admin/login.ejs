@@ -1,46 +1,137 @@
-<!-- views/admin/login.ejs -->
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Login</title>
-    <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#0b73da",
+              "background-light": "#f5f7f8",
+              "background-dark": "#101922",
+            },
+            fontFamily: {
+              display: ["Space Grotesk", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
   </head>
-  <body
-    class="bg-gray-900 text-white flex justify-center items-center h-screen"
-  >
-    <form
-      method="POST"
-      action="/admin/login"
-      class="bg-gray-800 p-6 rounded shadow-md w-80"
+
+  <body class="font-display bg-background-dark text-gray-200">
+    <div
+      class="relative flex min-h-screen w-full flex-col items-center justify-center bg-background-dark p-4 overflow-hidden"
     >
+      <div
+        class="absolute -top-1/4 -left-1/4 h-96 w-96 rounded-full bg-primary/20 blur-3xl animate-pulse"
+        style="animation-duration: 5s"
+      ></div>
+      <div
+        class="absolute -bottom-1/4 -right-1/4 h-96 w-96 rounded-full bg-primary/20 blur-3xl animate-pulse"
+        style="animation-duration: 5s; animation-delay: 2.5s"
+      ></div>
 
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        required
-        class="w-full p-2 mb-3 text-black"
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        required
-        class="w-full p-2 mb-4 text-black"
-      />
-      <button
-        type="submit"
-        class="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded"
+      <div
+        class="relative z-10 w-full max-w-md rounded-xl border border-white/10 bg-[#111418]/60 p-8 backdrop-blur-sm"
       >
-        Login
-      </button>
+        <div class="flex flex-col items-center justify-center space-y-6">
+          <div class="relative h-16 w-16">
+            <div
+              class="absolute inset-0 rounded-full bg-primary opacity-30 blur-lg animate-pulse"
+            ></div>
+            <div
+              class="relative flex h-full w-full items-center justify-center rounded-full bg-[#283039]"
+            >
+              <span class="material-symbols-outlined text-primary text-4xl"
+                >hub</span
+              >
+            </div>
+          </div>
 
-      <h1 class="text-lg font-bold mb-4 text-center">Admin Login</h1>
+          <div class="flex w-full flex-col gap-1 text-center">
+            <p
+              class="text-white text-3xl font-bold font-display tracking-tight"
+            >
+              Admin Login
+            </p>
+            <p class="text-[#9cabba] text-base font-normal leading-normal">
+              Welcome back, please enter your credentials
+            </p>
+          </div>
 
-      <% if (error) { %>
-      <div class="text-red-500 text-sm mb-2"><%= error %></div>
-      <% } %>
-    </form>
+          <form method="POST" action="/admin/login" class="w-full space-y-6">
+            <div class="flex flex-col">
+              <label class="flex flex-col w-full">
+                <p class="text-white text-sm font-medium leading-normal pb-2">
+                  Username or Email
+                </p>
+                <input
+                  name="username"
+                  value="<%= typeof username !== 'undefined' ? username : '' %>"
+                  required
+                  placeholder="Enter your username or email"
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-white/10 bg-[#283039] p-4 text-base font-normal leading-normal text-white placeholder:text-[#9cabba] transition-shadow duration-300 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 h-12"
+                />
+              </label>
+            </div>
+
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between pb-2">
+                <p class="text-white text-sm font-medium leading-normal">
+                  Password
+                </p>
+              </div>
+              <input
+                name="password"
+                type="password"
+                required
+                placeholder="Enter your password"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-white/10 bg-[#283039] p-4 text-base font-normal leading-normal text-white placeholder:text-[#9cabba] transition-shadow duration-300 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 h-12"
+              />
+            </div>
+
+            <% if (error) { %>
+            <div
+              class="flex items-center gap-2 rounded-lg bg-red-500/10 p-3 text-sm text-red-400"
+            >
+              <span class="material-symbols-outlined text-base">error</span>
+              <p><%= error %></p>
+            </div>
+            <% } %>
+
+            <div class="flex pt-2">
+              <button
+                type="submit"
+                class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 flex-1 bg-primary text-white text-base font-bold leading-normal tracking-wide transition-all hover:bg-primary/90 hover:shadow-[0_0_15px_rgba(11,115,218,0.5)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-dark focus:ring-primary"
+              >
+                <span class="truncate">Login</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
