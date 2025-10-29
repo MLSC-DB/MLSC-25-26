@@ -540,11 +540,27 @@ const adminLoginLimiter = rateLimit({
   message: "Too many admin login attempts. Try again later.",
 });
 
+// Site-wide default rate limiter (applies to most requests)
+// Skip health/readiness probes so uptime checks are not blocked
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 250, // limit each IP to 200 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skip: (req) => {
+    // allow health checks and readiness probes to bypass limits
+    const p = (req.path || "").toLowerCase();
+    return p === "/healthz" || p === "/readyz" || p.startsWith("/health") || p.startsWith("/ready");
+  },
+});
+
 // Set view engine and views directory
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // Serve static files
+// Apply global/site-wide rate limiter before serving static assets and other routes
+app.use(globalLimiter);
 app.use(express.static(path.join(__dirname, "public")));
 
 // Middlewares to parse form and JSON data
@@ -918,7 +934,8 @@ app.get("/admin/test-sheet", isAdmin, async (req, res) => {
   }
 });
 
-app.post("/register", upload.none(), async (req, res) => {
+// Apply a stricter limiter to registration submissions to prevent spam
+app.post("/register", registerLimiter, upload.none(), async (req, res) => {
   const body = req.body || {};
 
   // Basic personal required fields
