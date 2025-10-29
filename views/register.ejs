@@ -22,6 +22,12 @@
   <link rel="stylesheet" href="/css/register-style.css">
   </head>
   <body>
+    <!-- Prominent fixed Back button (visible on mobile & desktop) -->
+    <button id="backBtnFixed" aria-label="Go back" class="register-back-fixed">
+      <!-- simple arrow + label -->
+      <span class="material-symbols-outlined" aria-hidden="true" style="font-size:18px;line-height:1">arrow_back</span>
+      <span>Back</span>
+    </button>
     <!-- Register Loader Overlay (unique for Registration) -->
     <style>
       #register-loader{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.96);color:#e5e7eb;transition:opacity .25s ease}
@@ -56,26 +62,10 @@
         <!-- Header -->
         <header class="mb-6 text-center">
           <div class="inline-flex items-center gap-3 justify-center">
-            <div
-              class="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary to-accent shadow-[0_10px_30px_rgba(124,58,237,0.12)] animate-floaty"
-            >
-              <svg
-                class="w-6 h-6 text-white"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.4"
-              >
-                <path
-                  d="M12 2v7l6-3-6 10v-7L6 19l6-17z"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
+            <!-- logo removed to keep header minimal per request -->
             <div>
               <h1 class="text-2xl sm:text-3xl font-extrabold">
-                MLSC Build-a-thon 2025
+                ATAVISTA
               </h1>
               <p class="text-sm text-slate-300 mt-0.5">
                 Open Innovation Hackathon — Microsoft Learn Student Chapter
@@ -712,17 +702,7 @@
                 </div>
               </div>
 
-              <div class="flex justify-between mt-4">
-                <div>
-                  <button
-                    id="backBtn"
-                    type="button"
-                    class="px-4 py-2 rounded-xl bg-white/6 text-slate-200 hover:bg-white/10"
-                  >
-                    Back
-                  </button>
-                </div>
-                <div class="flex items-center gap-3">
+              <div class="flex justify-end mt-4 items-center gap-3">
                   <button
                     id="clearFormBtn"
                     type="button"
@@ -736,7 +716,6 @@
                   >
                     Submit Registration
                   </button>
-                </div>
               </div>
             </section>
           </form>
@@ -745,9 +724,9 @@
         <!-- Footer -->
         <footer class="mt-6 text-center text-sm text-slate-400">
           Questions? Contact
-          <a href="mailto:mlsc@college.edu" class="underline text-slate-200"
-            >mlsc@college.edu</a
-          >
+            <a href="mailto:mscdb@thapar.edu" class="underline text-slate-200">mscdb@thapar.edu</a>
+            <span class="mx-2">|</span>
+            <a href="https://instagram.com/mlsc_db" target="_blank" rel="noopener noreferrer" class="underline text-slate-200">Instagram</a>
         </footer>
       </div>
     </div>
@@ -833,6 +812,23 @@
 
     <!-- Register page script (public) -->
     <script src="/js/register-main.js"></script>
+    <script>
+      (function(){
+        function goBack(e){
+          e && e.preventDefault && e.preventDefault();
+          try{
+            if(window.history && window.history.length>1){
+              window.history.back();
+            } else {
+              window.location.href = '/';
+            }
+          }catch(err){}
+        }
+        var btn = document.getElementById('backBtnFixed');
+        if(btn){ btn.addEventListener('click', goBack, { passive:false }); }
+        if(btn){ btn.addEventListener('keydown', function(ev){ if(ev.key==='Enter' || ev.key===' ') { goBack(ev); } }); }
+      })();
+    </script>
     <script>
       // Hide loader when page fully loaded (styles + images), with a safety fallback
       (function(){

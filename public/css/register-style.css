@@ -336,3 +336,57 @@ body::before {
 #mlscForm input[type="radio"] {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Prominent fixed back button for register page */
+.register-back-fixed {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(16, 185, 129, 0.98),
+    rgba(124, 58, 237, 0.98)
+  );
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(7, 89, 133, 0.18),
+    0 6px 16px rgba(124, 58, 237, 0.08);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(6px) saturate(120%);
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+.register-back-fixed:focus {
+  outline: none;
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.18),
+    0 0 0 4px rgba(124, 58, 237, 0.06);
+}
+.register-back-fixed:hover {
+  transform: translateY(-1px);
+}
+
+/* Slightly larger on small viewports for easier tapping */
+@media (max-width: 640px) {
+  .register-back-fixed {
+    top: 12px;
+    left: 12px;
+    padding: 12px 16px;
+    font-size: 15px;
+    border-radius: 14px;
+  }
+}
+
+/* If the page adds any header that could clash, allow an alternate placement (bottom-left) via class */
+.register-back-fixed.bottom-left {
+  top: auto;
+  bottom: 20px;
+  left: 16px;
+}

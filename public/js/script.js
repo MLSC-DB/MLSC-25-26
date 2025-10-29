@@ -376,11 +376,13 @@ refreshDivs.forEach((div) => {
 // Notification interactions (mobile + desktop friendly)
 const regBtn = document.querySelector(".register-button");
 if (regBtn) {
-  onPress(regBtn, function () {
-    // allow normal anchor navigation; if it's not an anchor, navigate programmatically
-    if (regBtn.tagName.toLowerCase() !== "a") {
-      window.location.href = "/register";
-    }
+  onPress(regBtn, function (e) {
+    // Always navigate explicitly to avoid prevented default on touch
+    const href = regBtn.getAttribute("href") || "/register";
+    try {
+      e && e.preventDefault && e.preventDefault();
+    } catch (_) {}
+    window.location.href = href;
     const notification = document.getElementById("notification");
     if (notification) notification.classList.add("hidden");
   });
@@ -758,6 +760,61 @@ function createAppWindow(id, title, url) {
       });
       popup.classList.remove("popup-loading");
       attachRegisterFormHandler(content);
+      // Execute any scripts that were part of the fetched fragment
+      // (scripts inserted via innerHTML don't execute automatically)
+      try {
+        const fragScripts = content.querySelectorAll("script");
+        fragScripts.forEach((s) => {
+          const newS = document.createElement("script");
+          if (s.src) {
+            newS.src = s.src;
+            // preserve type and async if set
+            if (s.type) newS.type = s.type;
+            if (s.async) newS.async = true;
+            document.body.appendChild(newS);
+          } else {
+            newS.textContent = s.textContent || s.innerText || "";
+            content.appendChild(newS);
+          }
+          // Remove the old inert script node
+          s.parentNode && s.parentNode.removeChild(s);
+        });
+      } catch (err) {
+        console.warn("Failed to execute fragment scripts:", err);
+      }
+      // Small runtime fixes for injected fragments (accessibility & security)
+      try {
+        const fixInstagramLinks = (root) => {
+          if (!root) return;
+          const links = root.querySelectorAll(".insta-link");
+          links.forEach((link) => {
+            if (!link.hasAttribute("rel"))
+              link.setAttribute("rel", "noopener noreferrer");
+            if (!link.hasAttribute("target"))
+              link.setAttribute("target", "_blank");
+            if (!link.hasAttribute("aria-label")) {
+              // prefer the nearest .name element inside the same card
+              let nameEl =
+                link.closest(".card") &&
+                link.closest(".card").querySelector(".name");
+              if (!nameEl)
+                nameEl =
+                  link.closest(".card") &&
+                  link.closest(".card").querySelector("h3, h4");
+              const name = nameEl
+                ? (nameEl.textContent || nameEl.innerText).trim()
+                : "";
+              const label = name ? `Instagram profile of ${name}` : "Instagram";
+              link.setAttribute("aria-label", label);
+            }
+          });
+        };
+
+        // run on the content area (where fragment was inserted)
+        fixInstagramLinks(content);
+      } catch (err) {
+        console.warn("Failed to apply fragment runtime fixes:", err);
+      }
     })
     .catch(() => {
       content.innerHTML = `
