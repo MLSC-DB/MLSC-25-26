@@ -1,7 +1,8 @@
 <!-- Mobile layout: 3 icons bottom row, 2 above; bigger icons; bottom centered via index.ejs container -->
 <div class="block sm:hidden">
   <div class="grid grid-cols-3 gap-2 place-items-center w-auto mx-auto">
-    <!-- Top row: two icons with a center spacer -->
+    <!-- Top row -->
+    <div class="w-[120px] h-[120px]"></div>
     <div
       class="icon group hover:cursor-pointer w-[120px] h-[120px] relative flex items-center justify-center"
     >
@@ -17,9 +18,10 @@
       </div>
     </div>
     <div class="w-[120px] h-[120px]"></div>
+    <!-- Registration icon (hidden for now) -->
     <a
       href="/register"
-      class="icon group w-[120px] h-[120px] relative flex items-center justify-center no-underline"
+      class="icon hidden group w-[120px] h-[120px] relative flex items-center justify-center no-underline"
     >
       <img
         src="/images/register.png"
@@ -96,10 +98,10 @@
         About_MLSC
       </div>
     </div>
-
+    <!-- Registration icon (hidden for now) -->
     <a
       href="/register"
-      class="icon group w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center no-underline"
+      class="icon hidden group w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] relative flex items-center justify-center no-underline"
     >
       <img
         src="/images/register.png"
