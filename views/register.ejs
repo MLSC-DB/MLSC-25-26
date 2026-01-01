@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>MLSC Build-a-thon 2025 — Registration (Single Page)</title>
+    <title>MLSC DB</title>
 
     <!-- Tailwind CDN (forms plugin) -->
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
@@ -21,7 +21,8 @@
   <!-- Register page stylesheet (public) -->
   <link rel="stylesheet" href="/css/register-style.css">
   </head>
-  <body>
+  <!-- Hidden class added to body to prevent FOUC -->
+  <body class="hidden">
     <!-- Prominent fixed Back button (visible on mobile & desktop) -->
     <button id="backBtnFixed" aria-label="Go back" class="register-back-fixed">
       <!-- simple arrow + label -->
